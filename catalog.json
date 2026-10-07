@@ -1,0 +1,43 @@
+{
+  "generated": "2026-10-08 00:11:20",
+  "store_url": "",
+  "count": 4,
+  "products": [
+    {
+      "slug": "json-formatter",
+      "name": "JSON Formatter",
+      "category": "web_tool",
+      "problem": "تنسيق/تصغير JSON بسرعة دون رفع بياناتك لأي موقع.",
+      "demo_url": "",
+      "stripe_payment_link": false,
+      "status": "built"
+    },
+    {
+      "slug": "word-counter",
+      "name": "Word Counter",
+      "category": "web_tool",
+      "problem": "عدّ الكلمات والأحرف وزمن القراءة داخل المتصفح.",
+      "demo_url": "",
+      "stripe_payment_link": false,
+      "status": "built"
+    },
+    {
+      "slug": "case-converter",
+      "name": "Case Converter",
+      "category": "web_tool",
+      "problem": "Switch text case between UPPER/lower/Title/snake/camel.",
+      "demo_url": "",
+      "stripe_payment_link": false,
+      "status": "built"
+    },
+    {
+      "slug": "base64-encoder",
+      "name": "Base64 Encoder",
+      "category": "web_tool",
+      "problem": "Encode and decode Base64 locally, no network.",
+      "demo_url": "",
+      "stripe_payment_link": false,
+      "status": "built"
+    }
+  ]
+}

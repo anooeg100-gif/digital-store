@@ -1,0 +1,11 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1"><title>Base64</title>
+<style>body{font-family:system-ui;background:#0f172a;color:#e2e8f0;margin:0;padding:16px}
+textarea{width:100%;height:34vh;padding:12px;background:#111827;color:#e2e8f0;border:0;border-radius:8px}
+button{margin:6px 6px 0 0;padding:8px 12px;border:0;border-radius:8px;background:#6366f1;color:#fff;cursor:pointer}</style>
+</head><body><textarea id="t"></textarea>
+<button onclick="e()">Encode</button><button onclick="d()">Decode</button>
+<script>const t=document.getElementById('t');
+function e(){try{t.value=btoa(unescape(encodeURIComponent(t.value)))}catch(x){alert(x.message)}}
+function d(){try{t.value=decodeURIComponent(escape(atob(t.value.trim())))}catch(x){alert('Invalid base64')}}
+</script></body></html>
