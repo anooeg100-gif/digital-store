@@ -1,7 +1,7 @@
 {
-  "generated": "2026-10-08 00:11:20",
-  "store_url": "",
-  "count": 4,
+  "generated": "2026-10-08 00:14:17",
+  "store_url": "https://anooeg100-gif.github.io/digital-store/",
+  "count": 6,
   "products": [
     {
       "slug": "json-formatter",
@@ -35,6 +35,24 @@
       "name": "Base64 Encoder",
       "category": "web_tool",
       "problem": "Encode and decode Base64 locally, no network.",
+      "demo_url": "",
+      "stripe_payment_link": false,
+      "status": "built"
+    },
+    {
+      "slug": "micro-tools-playbook",
+      "name": "Micro Tools Playbook",
+      "category": "ebook",
+      "problem": "A practical playbook to build and sell tiny free tools.",
+      "demo_url": "",
+      "stripe_payment_link": false,
+      "status": "built"
+    },
+    {
+      "slug": "social-media-design-kit",
+      "name": "Social Media Design Kit",
+      "category": "design_pack",
+      "problem": "Ready SVG/PNG templates for posts, thumbnails and stories.",
       "demo_url": "",
       "stripe_payment_link": false,
       "status": "built"

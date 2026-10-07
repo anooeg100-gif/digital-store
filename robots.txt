@@ -1,2 +1,3 @@
 User-agent: *
 Allow: /
+Sitemap: https://anooeg100-gif.github.io/digital-store/sitemap.xml
