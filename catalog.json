@@ -1,7 +1,7 @@
 {
-  "generated": "2026-10-08 00:37:17",
+  "generated": "2026-10-08 00:45:17",
   "store_url": "https://anooeg100-gif.github.io/digital-store/",
-  "count": 6,
+  "count": 8,
   "products": [
     {
       "slug": "json-formatter",
@@ -9,8 +9,7 @@
       "category": "web_tool",
       "problem": "تنسيق/تصغير JSON بسرعة دون رفع بياناتك لأي موقع.",
       "demo_url": "",
-      "paid": false,
-      "price": null,
+      "stripe_payment_link": false,
       "status": "built"
     },
     {
@@ -19,8 +18,7 @@
       "category": "web_tool",
       "problem": "عدّ الكلمات والأحرف وزمن القراءة داخل المتصفح.",
       "demo_url": "",
-      "paid": false,
-      "price": null,
+      "stripe_payment_link": false,
       "status": "built"
     },
     {
@@ -29,8 +27,7 @@
       "category": "web_tool",
       "problem": "Switch text case between UPPER/lower/Title/snake/camel.",
       "demo_url": "",
-      "paid": false,
-      "price": null,
+      "stripe_payment_link": false,
       "status": "built"
     },
     {
@@ -39,8 +36,7 @@
       "category": "web_tool",
       "problem": "Encode and decode Base64 locally, no network.",
       "demo_url": "",
-      "paid": false,
-      "price": null,
+      "stripe_payment_link": false,
       "status": "built"
     },
     {
@@ -49,8 +45,7 @@
       "category": "ebook",
       "problem": "A practical playbook to build and sell tiny free tools.",
       "demo_url": "",
-      "paid": false,
-      "price": null,
+      "stripe_payment_link": false,
       "status": "built"
     },
     {
@@ -59,8 +54,25 @@
       "category": "design_pack",
       "problem": "Ready SVG/PNG templates for posts, thumbnails and stories.",
       "demo_url": "",
-      "paid": false,
-      "price": null,
+      "stripe_payment_link": false,
+      "status": "built"
+    },
+    {
+      "slug": "promo-short-kit",
+      "name": "Promo Short Kit",
+      "category": "video",
+      "problem": "A ready vertical promo video for your product or profile.",
+      "demo_url": "",
+      "stripe_payment_link": false,
+      "status": "built"
+    },
+    {
+      "slug": "landing-starter",
+      "name": "Landing Starter",
+      "category": "template",
+      "problem": "A fast responsive landing page template for any product.",
+      "demo_url": "",
+      "stripe_payment_link": false,
       "status": "built"
     }
   ]
