@@ -1,0 +1,109 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>SQL Formatter</title><meta name="description" content="Format SQL (PostgreSQL, MySQL, SQLite, Standard). Beautify queries. Client-side only."><style>
+:root{--bg:#0b1020;--fg:#e6e9f5;--card:#151b33;--line:#232a4a;--p:#6366f1;--ok:#34d399;--err:#f87171;--muted:#6b7280}
+*{box-sizing:border-box}body{margin:0;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;background:var(--bg);color:var(--fg);min-height:100vh}
+.wrap{max-width:1100px;margin:0 auto;padding:24px 16px}
+header{display:flex;gap:12px;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap}
+h1{font-size:clamp(20px,3vw,28px);margin:0}.sub{color:var(--muted);font-size:13px;margin-top:4px}
+.row{display:grid;gap:16px;grid-template-columns:1fr 1fr}@media (max-width:900px){.row{grid-template-columns:1fr}}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:12px;display:flex;flex-direction:column}
+.panel header{padding:12px 16px;border-bottom:1px solid var(--line);background:rgba(255,255,255,.02)}
+.panel header h2{font-size:13px;text-transform:uppercase;letter-spacing:.08em;margin:0;color:var(--muted)}
+textarea{flex:1;border:none;outline:none;background:transparent;color:var(--fg);font-family:inherit;font-size:14px;line-height:1.6;padding:16px;resize:vertical;min-height:420px}
+textarea::placeholder{color:var(--muted)}
+.actions{display:flex;gap:8px;padding:12px 16px;border-top:1px solid var(--line);flex-wrap:wrap}
+.btn{padding:8px 14px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--fg);font-size:13px;cursor:pointer;transition:.15s}
+.btn:hover{border-color:var(--p)}.btn.primary{background:var(--p);border-color:var(--p);color:#fff}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.status{padding:10px 16px;font-size:13px;display:flex;align-items:center;gap:8px;min-height:40px}
+.status.ok{color:var(--ok)}.status.err{color:var(--err)}
+.badge{display:inline-block;padding:2px 8px;border-radius:999px;font-size:11px;font-weight:700;background:rgba(52,211,153,.15);color:var(--ok);border:1px solid rgba(52,211,153,.3)}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;font-size:12px;color:var(--muted);padding:0 16px 12px}
+.opt{display:flex;gap:16px;align-items:center;padding:12px 16px;border-top:1px solid var(--line);flex-wrap:wrap;font-size:13px}
+.opt label{display:flex;align-items:center;gap:6px;cursor:pointer}
+select{padding:8px 12px;border-radius:6px;border:1px solid var(--line);background:var(--card);color:var(--fg);font-family:inherit;font-size:13px}
+input[type=file]{display:none}
+.footer{text-align:center;padding:24px;color:var(--muted);font-size:13px}
+a{color:var(--p)}a:hover{text-decoration:underline}
+</style></head><body><div class="wrap">
+<header><div><h1>SQL Formatter</h1><div class="sub">PostgreSQL • MySQL • SQLite • Standard — Format, indent, uppercase keywords — 100% client-side</div></div><span class="badge">FREE</span></header>
+<div class="row">
+  <section class="panel"><header><h2>Input SQL</h2></header>
+  <div class="opt">
+    <label>Dialect:
+      <select id="dialect">
+        <option value="standard">Standard SQL</option>
+        <option value="postgresql">PostgreSQL</option>
+        <option value="mysql">MySQL / MariaDB</option>
+        <option value="sqlite">SQLite</option>
+      </select>
+    </label>
+    <label><input type="checkbox" id="upper" checked> Uppercase keywords</label>
+    <label><input type="checkbox" id="indent" checked> Indent (2 spaces)</label>
+    <label><input type="checkbox" id="dense" checked> Dense operators (a = b)</label>
+    <label><input type="checkbox" id="lines" checked> Break after commas</label>
+    <button class="btn" id="loadFile">Load SQL File</button>
+    <input type="file" id="fileIn" accept=".sql">
+  </div>
+  <textarea id="in" spellcheck="false" placeholder="Paste SQL query here, or load a file..."></textarea>
+  <div class="actions">
+    <button class="btn primary" id="fmt">Format</button>
+    <button class="btn" id="cps">Compact</button>
+    <button class="btn" id="clr">Clear</button>
+    <button class="btn" id="cpy">Copy Result</button>
+    <button class="btn" id="dwn">Download .sql</button>
+  </div>
+  <div class="status" id="st"></div>
+</section>
+  <section class="panel"><header><h2>Formatted SQL</h2></header>
+  <textarea id="out" spellcheck="false" readonly placeholder="Formatted SQL appears here..."></textarea>
+  <div class="kv"><span>Original:</span><span id="szIn">—</span><span>Formatted:</span><span id="szOut">—</span><span>Lines:</span><span id="lnOut">—</span></div>
+</section>
+</div>
+<footer>No data leaves your browser. <a href="https://github.com/anooeg100-gif/digital-store">View source</a> · <a href="https://anooeg100-gif.github.io/digital-store/">← Back to store</a></footer>
+<script>
+const $=s=>document.querySelector(s);
+const inEl=$('#in'),outEl=$('#out'),st=$('#st'),szIn=$('#szIn'),szOut=$('#szOut'),lnOut=$('#lnOut');
+function setStatus(ok,msg){st.className='status '+(ok?'ok':'err');st.textContent=msg}
+function updateSize(){szIn.textContent=inEl.value.length<1024?inEl.value.length+' B':(inEl.value.length/1024).toFixed(1)+' KB';
+  szOut.textContent=outEl.value.length<1024?outEl.value.length+' B':(outEl.value.length/1024).toFixed(1)+' KB';
+  lnOut.textContent=outEl.value.split('\n').length}
+const KW_STD=/\b(SELECT|FROM|WHERE|JOIN|INNER|LEFT|RIGHT|FULL|OUTER|ON|AND|OR|NOT|IN|EXISTS|BETWEEN|LIKE|IS|NULL|AS|GROUP|BY|ORDER|HAVING|LIMIT|OFFSET|UNION|INTERSECT|EXCEPT|DISTINCT|CASE|WHEN|THEN|ELSE|END|IF|COALESCE|CAST|CONVERT|INSERT|UPDATE|DELETE|INTO|VALUES|SET|CREATE|DROP|ALTER|TABLE|INDEX|VIEW|TRIGGER|PROCEDURE|FUNCTION|PRIMARY|KEY|FOREIGN|REFERENCES|UNIQUE|CHECK|DEFAULT|AUTO_INCREMENT|IDENTITY|SERIAL|NOT|NULL)\b/gi;
+const KW_PG=/\b(ILIKE|SIMILAR TO|OVERLAPS|RETURNING|CTE|WITH RECURSIVE|LATERAL|DISTINCT ON|ON CONFLICT|DO NOTHING|DO UPDATE|MERGE|UPSERT)\b/gi;
+const KW_MY=/\b(AUTO_INCREMENT|ENGINE|CHARSET|COLLATE|PARTITION|FULLTEXT|SPATIAL|USE|IGNORE|REPLACE|INSERT IGNORE|ON DUPLICATE KEY UPDATE|LIMIT \d+ OFFSET \d+)\b/gi;
+const KW_SQLITE=/\b(AUTOINCREMENT|WITHOUT ROWID|VACUUM|ATTACH|DETACH|PRAGMA)\b/gi;
+function format(sql){
+  if(!sql.trim())return sql;
+  let out=sql;
+  const dialect=$('#dialect').value;
+  let kw=KW_STD;
+  if(dialect==='postgresql')kw=new RegExp(KW_STD.source+'|'+KW_PG.source,'gi');
+  else if(dialect==='mysql')kw=new RegExp(KW_STD.source+'|'+KW_MY.source,'gi');
+  else if(dialect==='sqlite')kw=new RegExp(KW_STD.source+'|'+KW_SQLITE.source,'gi');
+  if($('#upper').checked)out=out.replace(kw,m=>m.toUpperCase());
+  let indent=0;const lines=[];let current='';
+  const tokens=out.match(/(\(|\)|,|;|\s+|\S+)/g)||[];
+  for(const tok of tokens){
+    if(tok==='('){if(current.trim()){lines.push(' '.repeat(indent)+current.trim());current=''}lines.push(' '.repeat(indent)+'(');indent+=2}
+    else if(tok===')'){if(current.trim()){lines.push(' '.repeat(indent)+current.trim());current=''}indent=Math.max(0,indent-2);lines.push(' '.repeat(indent)+')')}
+    else if(tok===','){current+=',';lines.push(' '.repeat(indent)+current.trim());current=''}
+    else if(tok===';'){current+=';';lines.push(' '.repeat(indent)+current.trim());current='';indent=0}
+    else if(/\s+/.test(tok)){if($('#dense').checked){current+=' '}else current+=tok}
+    else{current+=tok}
+  }
+  if(current.trim())lines.push(' '.repeat(indent)+current.trim());
+  let out=lines.join('\n');
+  if(!$('#lines').checked)out=out.replace(/,\n/g,', ').replace(/\(\n/g,'(').replace(/\n\)/g,')');
+  return out.trim()
+}
+function compact(sql){return sql.replace(/\s+/g,' ').trim()}
+function process(fn){
+  const sql=inEl.value.trim();if(!sql){setStatus(false,'Empty input');return}
+  try{const out=fn(sql);outEl.value=out;updateSize();setStatus(true,'Done')}catch(e){setStatus(false,e.message)}}
+$('#fmt').onclick=()=>process(format);$('#cps').onclick=()=>process(compact);
+$('#clr').onclick=()=>{inEl.value='';outEl.value='';updateSize();setStatus(true,'Cleared')};
+$('#cpy').onclick=async()=>{await navigator.clipboard.writeText(outEl.value);setStatus(true,'Copied')};
+$('#dwn').onclick=()=>{const b=new Blob([outEl.value],{type:'text/sql'});const u=URL.createObjectURL(b);const a=document.createElement('a');a.href=u;a.download='formatted.sql';a.click();URL.revokeObjectURL(u)};
+$('#loadFile').onclick=()=>$('#fileIn').click();
+$('#fileIn').onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{inEl.value=r.result;updateSize();setStatus(true,'File loaded: '+f.name)};r.readAsText(f)};
+inEl.addEventListener('input',updateSize);
+</script></body></html>

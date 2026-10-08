@@ -1,7 +1,7 @@
 {
-  "generated": "2026-10-09 00:17:34",
+  "generated": "2026-10-09 00:20:55",
   "store_url": "https://anooeg100-gif.github.io/digital-store/",
-  "count": 10,
+  "count": 24,
   "products": [
     {
       "slug": "json-formatter",
@@ -98,6 +98,146 @@
       "name": "TikTok Thumbnail Generator",
       "category": "web_tool",
       "problem": "Generate TikTok thumbnails offline",
+      "demo_url": "",
+      "paid": true,
+      "price": null,
+      "status": "built"
+    },
+    {
+      "slug": "csv-to-json",
+      "name": "CSV ↔ JSON Converter",
+      "category": "web_tool",
+      "problem": "Convert CSV to JSON and back with schema inference",
+      "demo_url": "",
+      "paid": true,
+      "price": null,
+      "status": "built"
+    },
+    {
+      "slug": "regex-tester",
+      "name": "Regex Tester & Explainer",
+      "category": "web_tool",
+      "problem": "Test, debug, and explain regex patterns",
+      "demo_url": "",
+      "paid": true,
+      "price": null,
+      "status": "built"
+    },
+    {
+      "slug": "jwt-decoder",
+      "name": "JWT Decoder & Validator",
+      "category": "web_tool",
+      "problem": "Decode, verify, and inspect JWT tokens",
+      "demo_url": "",
+      "paid": true,
+      "price": null,
+      "status": "built"
+    },
+    {
+      "slug": "color-palette-gen",
+      "name": "Accessible Color Palette Generator",
+      "category": "web_tool",
+      "problem": "Generate WCAG AA/AAA compliant color palettes",
+      "demo_url": "",
+      "paid": true,
+      "price": null,
+      "status": "built"
+    },
+    {
+      "slug": "svg-optimizer",
+      "name": "SVG Optimizer",
+      "category": "web_tool",
+      "problem": "Minify and clean SVG files",
+      "demo_url": "",
+      "paid": true,
+      "price": null,
+      "status": "built"
+    },
+    {
+      "slug": "markdown-to-html",
+      "name": "Markdown to HTML Converter",
+      "category": "web_tool",
+      "problem": "Convert Markdown to HTML with GFM and TOC",
+      "demo_url": "",
+      "paid": true,
+      "price": null,
+      "status": "built"
+    },
+    {
+      "slug": "cron-expression",
+      "name": "Cron Expression Builder",
+      "category": "web_tool",
+      "problem": "Build, test, and understand cron expressions",
+      "demo_url": "",
+      "paid": true,
+      "price": null,
+      "status": "built"
+    },
+    {
+      "slug": "base64-tool",
+      "name": "Base64 / URL / Hex Encoder",
+      "category": "web_tool",
+      "problem": "Encode/decode Base64, URL, Hex formats",
+      "demo_url": "",
+      "paid": true,
+      "price": null,
+      "status": "built"
+    },
+    {
+      "slug": "uuid-generator",
+      "name": "UUID / ULID / NanoID Generator",
+      "category": "web_tool",
+      "problem": "Generate UUIDs, ULIDs, NanoIDs in batch",
+      "demo_url": "",
+      "paid": true,
+      "price": null,
+      "status": "built"
+    },
+    {
+      "slug": "http-status-ref",
+      "name": "HTTP Status Codes Reference",
+      "category": "web_tool",
+      "problem": "Look up HTTP status codes and meanings",
+      "demo_url": "",
+      "paid": true,
+      "price": null,
+      "status": "built"
+    },
+    {
+      "slug": "mime-type-lookup",
+      "name": "MIME Type Extension Lookup",
+      "category": "web_tool",
+      "problem": "Find MIME type by extension or vice versa",
+      "demo_url": "",
+      "paid": true,
+      "price": null,
+      "status": "built"
+    },
+    {
+      "slug": "css-minifier",
+      "name": "CSS Minifier",
+      "category": "web_tool",
+      "problem": "Minify CSS with optimization options",
+      "demo_url": "",
+      "paid": true,
+      "price": null,
+      "status": "built"
+    },
+    {
+      "slug": "sql-formatter",
+      "name": "SQL Formatter",
+      "category": "web_tool",
+      "problem": "Format SQL queries for PostgreSQL/MySQL/SQLite",
+      "demo_url": "",
+      "paid": true,
+      "price": null,
+      "status": "built"
+    },
+    {
+      "slug": "graphql-playground",
+      "name": "GraphQL Query Builder",
+      "category": "web_tool",
+      "problem": "Build, validate, format GraphQL queries",
       "demo_url": "",
       "paid": true,
       "price": null,

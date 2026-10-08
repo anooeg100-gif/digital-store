@@ -1,0 +1,116 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Markdown to HTML Converter</title><meta name="description" content="Convert Markdown to HTML with GFM, TOC, syntax highlighting. Copy-paste ready. Client-side only."><style>
+:root{--bg:#0b1020;--fg:#e6e9f5;--card:#151b33;--line:#232a4a;--p:#6366f1;--ok:#34d399;--err:#f87171;--muted:#6b7280}
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,monospace;background:var(--bg);color:var(--fg);min-height:100vh}
+.wrap{max-width:1100px;margin:0 auto;padding:24px 16px}
+header{display:flex;gap:12px;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap}
+h1{font-size:clamp(20px,3vw,28px);margin:0}.sub{color:var(--muted);font-size:13px;margin-top:4px}
+.row{display:grid;gap:16px;grid-template-columns:1fr 1fr}@media (max-width:900px){.row{grid-template-columns:1fr}}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:12px;display:flex;flex-direction:column}
+.panel header{padding:12px 16px;border-bottom:1px solid var(--line);background:rgba(255,255,255,.02)}
+.panel header h2{font-size:13px;text-transform:uppercase;letter-spacing:.08em;margin:0;color:var(--muted)}
+textarea{flex:1;border:none;outline:none;background:transparent;color:var(--fg);font-family:inherit;font-size:14px;line-height:1.6;padding:16px;resize:vertical;min-height:420px}
+textarea::placeholder{color:var(--muted)}
+.actions{display:flex;gap:8px;padding:12px 16px;border-top:1px solid var(--line);flex-wrap:wrap}
+.btn{padding:8px 14px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--fg);font-size:13px;cursor:pointer;transition:.15s}
+.btn:hover{border-color:var(--p)}.btn.primary{background:var(--p);border-color:var(--p);color:#fff}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.status{padding:10px 16px;font-size:13px;display:flex;align-items:center;gap:8px;min-height:40px}
+.status.ok{color:var(--ok)}.status.err{color:var(--err)}
+.badge{display:inline-block;padding:2px 8px;border-radius:999px;font-size:11px;font-weight:700;background:rgba(52,211,153,.15);color:var(--ok);border:1px solid rgba(52,211,153,.3)}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;font-size:12px;color:var(--muted);padding:0 16px 12px}
+.opt{display:flex;gap:16px;align-items:center;padding:12px 16px;border-top:1px solid var(--line);flex-wrap:wrap;font-size:13px}
+.opt label{display:flex;align-items:center;gap:6px;cursor:pointer}
+.footer{text-align:center;padding:24px;color:var(--muted);font-size:13px}
+a{color:var(--p)}a:hover{text-decoration:underline}
+</style></head><body><div class="wrap">
+<header><div><h1>Markdown to HTML Converter</h1><div class="sub">GFM • Tables • TOC • Syntax Highlight • Copy-paste ready — 100% client-side</div></div><span class="badge">FREE</span></header>
+<div class="row">
+  <section class="panel"><header><h2>Markdown Input</h2></header>
+  <div class="opt">
+    <label><input type="checkbox" id="gfm" checked> GFM (tables, task lists, strikethrough)</label>
+    <label><input type="checkbox" id="breaks" checked> Hard line breaks</label>
+    <label><input type="checkbox" id="toc" checked> Generate Table of Contents</label>
+    <label><input type="checkbox" id="highlight" checked> Syntax highlight (basic)</label>
+    <label><input type="checkbox" id="sanitize" checked> Sanitize HTML</label>
+  </div>
+  <textarea id="in" spellcheck="false" placeholder="Write or paste Markdown here..."></textarea>
+  <div class="actions">
+    <button class="btn primary" id="conv">Convert</button>
+    <button class="btn" id="clr">Clear</button>
+    <button class="btn" id="cpy">Copy HTML</button>
+    <button class="btn" id="dwn">Download .html</button>
+  </div>
+  <div class="status" id="st"></div>
+</section>
+  <section class="panel"><header><h2>HTML Output</h2></header>
+  <textarea id="out" spellcheck="false" readonly placeholder="HTML output appears here..."></textarea>
+  <div class="kv"><span>Words:</span><span id="wc">—</span><span>Size:</span><span id="sz">—</span></div>
+  <details style="padding:0 16px 16px"><summary style="cursor:pointer;color:var(--muted)">Preview</summary>
+  <div id="preview" style="margin-top:12px;padding:16px;background:white;color:black;border-radius:8px;max-height:300px;overflow:auto"></div>
+  </details>
+</section>
+</div>
+<footer>No data leaves your browser. <a href="https://github.com/anooeg100-gif/digital-store">View source</a> · <a href="https://anooeg100-gif.github.io/digital-store/">← Back to store</a></footer>
+<script>
+const $=s=>document.querySelector(s);
+const inEl=$('#in'),outEl=$('#out'),st=$('#st'),wc=$('#wc'),sz=$('#sz'),preview=$('#preview');
+function setStatus(ok,msg){st.className='status '+(ok?'ok':'err');st.textContent=msg}
+const escapeHtml=s=>s.replace(/[&<>"']/g,c=>({ '&':'&','<':'<','>':'>','"':'"',"'":''' }[c]));
+const mdToHtml=(md,opts)=>{
+  let html=md;
+  // Headers + TOC anchors
+  const headers=[];html=html.replace(/^(#{1,6})\s+(.+)$/gm,(m,h,txt)=>{
+    const level=h.length;const id=txt.toLowerCase().replace(/[^\w]+/g,'-').replace(/^-|-$/g,'');
+    headers.push({level,id,text:txt});return `<h${level} id="${id}">${escapeHtml(txt)}</h${level}>`});
+  // Bold/italic/code
+  html=html.replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>').replace(/\*(.+?)\*/g,'<em>$1</em>').replace(/`(.+?)`/g,'<code>$1</code>');
+  // Strikethrough
+  if(opts.gfm)html=html.replace(/~~(.+?)~~/g,'<del>$1</del>');
+  // Links
+  html=html.replace(/\[(.+?)\]\((.+?)\)/g,'<a href="$2">$1</a>');
+  // Images
+  html=html.replace(/!\[(.+?)\]\((.+?)\)/g,'<img src="$2" alt="$1">');
+  // Code blocks
+  html=html.replace(/```(\w*)\n([\s\S]*?)```/g,(m,lang,code)=>{
+    const esc=escapeHtml(code.trim());return `<pre><code class="lang-${lang}">${esc}</code></pre>`});
+  // Inline code already done
+  // Blockquotes
+  html=html.replace(/^>\s(.+)$/gm,'<blockquote>$1</blockquote>');
+  // Lists
+  html=html.replace(/^-\s+(.+)$/gm,'<li>$1</li>').replace(/(<li>.*<\/li>\n)+/g,m=>'<ul>'+m+'</ul>');
+  html=html.replace(/^\d+\.\s+(.+)$/gm,'<li>$1</li>').replace(/(<li>.*<\/li>\n)+/g,m=>'<ol>'+m+'</ol>');
+  // Task lists
+  if(opts.gfm)html=html.replace(/<li>\[([ x])\]\s(.+)<\/li>/g,(m,c,txt)=>`<li><input type="checkbox"${c==='x'?' checked':''} disabled> ${escapeHtml(txt)}</li>`);
+  // Tables
+  if(opts.gfm){
+    html=html.replace(/^\|(.+)\|\s*\n\|([\s\-\|:]+)\|\s*\n((?:^\|.+\|\s*\n?)+)/gm,(m,hdr,sep,rows)=>{
+      const cols=hdr.split('|').slice(1,-1).map(c=>c.trim());
+      const aligns=sep.split('|').slice(1,-1).map(c=>{const t=c.trim();if(t.startsWith(':')&&t.endsWith(':'))return 'center';if(t.endsWith(':'))return 'right';return 'left'});
+      const th=cols.map((c,i)=>`<th style="text-align:${aligns[i]}">${escapeHtml(c)}</th>`).join('');
+      const trs=rows.trim().split('\n').map(r=>{const tds=r.split('|').slice(1,-1).map(c=>`<td>${escapeHtml(c.trim())}</td>`).join('');return `<tr>${tds}</tr>`}).join('');
+      return `<table><thead><tr>${th}</tr></thead><tbody>${trs}</tbody></table>`});
+  }
+  // Paragraphs
+  html=html.replace(/^(?!<[huoltbpi])(.+)$/gm,(m,txt)=>`<p>${txt}</p>`).replace(/<p>\s*<\/p>/g,'');
+  // Hard breaks
+  if(opts.breaks)html=html.replace(/\n/g,'<br>');
+  // TOC
+  let toc='';if(opts.toc&&headers.length){toc='<nav class="toc"><strong>Contents</strong><ul>';headers.forEach(h=>{toc+=`<li style="margin-left:${(h.level-1)*1.5}rem"><a href="#${h.id}">${escapeHtml(h.text)}</a></li>`});toc+='</ul></nav>'}
+  // Sanitize
+  if(opts.sanitize){html=html.replace(/on\w+="[^"]*"/g,'').replace(/javascript:/gi,'')};
+  // Basic syntax highlight
+  if(opts.highlight){html=html.replace(/<code class="lang-(\w+)">([\s\S]*?)<\/code>/g,(m,lang,code)=>`<code class="lang-${lang} hljs">${code}</code>`)};
+  return toc+html;
+};
+function convert(){
+  const md=inEl.value;if(!md.trim()){setStatus(false,'Empty input');return}
+  const opts={gfm:$('#gfm').checked,breaks:$('#breaks').checked,toc:$('#toc').checked,highlight:$('#highlight').checked,sanitize:$('#sanitize').checked};
+  const html=mdToHtml(md,opts);outEl.value=html;preview.innerHTML=html;
+  wc.textContent=md.trim().split(/\s+/).filter(Boolean).length;sz.textContent=html.length<1024?html.length+' B':(html.length/1024).toFixed(1)+' KB';
+  setStatus(true,'Converted ✓')
+}
+$('#conv').onclick=convert;$('#clr').onclick=()=>{inEl.value='';outEl.value='';preview.innerHTML='';wc.textContent='—';sz.textContent='—';setStatus(true,'Cleared')};
+$('#cpy').onclick=async()=>{await navigator.clipboard.writeText(outEl.value);setStatus(true,'Copied')};
+$('#dwn').onclick=()=>{const b=new Blob([outEl.value],{type:'text/html'});const u=URL.createObjectURL(b);const a=document.createElement('a');a.href=u;a.download='converted.html';a.click();URL.revokeObjectURL(u)};
+inEl.addEventListener('keydown',e=>{if(e.ctrlKey&&e.key==='Enter'){e.preventDefault();convert()}});
+</script></body></html>

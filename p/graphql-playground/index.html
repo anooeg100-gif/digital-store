@@ -1,0 +1,127 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>GraphQL Query Builder</title><meta name="description" content="Build, validate, format GraphQL queries. Introspection helper. Client-side only."><style>
+:root{--bg:#0b1020;--fg:#e6e9f5;--card:#151b33;--line:#232a4a;--p:#6366f1;--ok:#34d399;--err:#f87171;--muted:#6b7280}
+*{box-sizing:border-box}body{margin:0;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;background:var(--bg);color:var(--fg);min-height:100vh}
+.wrap{max-width:1100px;margin:0 auto;padding:24px 16px}
+header{display:flex;gap:12px;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap}
+h1{font-size:clamp(20px,3vw,28px);margin:0}.sub{color:var(--muted);font-size:13px;margin-top:4px}
+.row{display:grid;gap:16px;grid-template-columns:1fr 1fr}@media (max-width:900px){.row{grid-template-columns:1fr}}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:12px;display:flex;flex-direction:column}
+.panel header{padding:12px 16px;border-bottom:1px solid var(--line);background:rgba(255,255,255,.02)}
+.panel header h2{font-size:13px;text-transform:uppercase;letter-spacing:.08em;margin:0;color:var(--muted)}
+textarea{flex:1;border:none;outline:none;background:transparent;color:var(--fg);font-family:inherit;font-size:14px;line-height:1.6;padding:16px;resize:vertical;min-height:420px}
+textarea::placeholder{color:var(--muted)}
+.actions{display:flex;gap:8px;padding:12px 16px;border-top:1px solid var(--line);flex-wrap:wrap}
+.btn{padding:8px 14px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--fg);font-size:13px;cursor:pointer;transition:.15s}
+.btn:hover{border-color:var(--p)}.btn.primary{background:var(--p);border-color:var(--p);color:#fff}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.status{padding:10px 16px;font-size:13px;display:flex;align-items:center;gap:8px;min-height:40px}
+.status.ok{color:var(--ok)}.status.err{color:var(--err)}
+.badge{display:inline-block;padding:2px 8px;border-radius:999px;font-size:11px;font-weight:700;background:rgba(52,211,153,.15);color:var(--ok);border:1px solid rgba(52,211,153,.3)}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;font-size:12px;color:var(--muted);padding:0 16px 12px}
+.opt{display:flex;gap:16px;align-items:center;padding:12px 16px;border-top:1px solid var(--line);flex-wrap:wrap;font-size:13px}
+.opt label{display:flex;align-items:center;gap:6px;cursor:pointer}
+input[type=file]{display:none}
+.schema-tree{padding:16px;max-height:500px;overflow:auto;font-size:12px;line-height:1.8}
+.schema-tree .type{margin:4px 0;padding:4px 8px;background:rgba(99,102,241,.1);border-radius:4px}
+.schema-tree .field{margin-left:16px;color:var(--muted)}
+.footer{text-align:center;padding:24px;color:var(--muted);font-size:13px}
+a{color:var(--p)}a:hover{text-decoration:underline}
+</style></head><body><div class="wrap">
+<header><div><h1>GraphQL Query Builder</h1><div class="sub">Build • Format • Validate • Introspect — 100% client-side</div></div><span class="badge">FREE</span></header>
+<div class="row">
+  <section class="panel"><header><h2>Query</h2></header>
+  <div class="opt">
+    <label><input type="checkbox" id="formatOpt" checked> Format on validate</label>
+    <label><input type="checkbox" id="addTypename" checked> Add __typename</label>
+    <button class="btn" id="loadFile">Load .graphql File</button>
+    <input type="file" id="fileIn" accept=".graphql,.gql,.txt">
+  </div>
+  <textarea id="query" spellcheck="false" placeholder="query { users { id name email } }"></textarea>
+  <div class="actions">
+    <button class="btn primary" id="validate">Validate & Format</button>
+    <button class="btn" id="introspect">Load Schema (Introspection)</button>
+    <button class="btn" id="clr">Clear</button>
+    <button class="btn" id="cpy">Copy</button>
+    <button class="btn" id="dwn">Download .graphql</button>
+  </div>
+  <div class="status" id="st"></div>
+</section>
+  <section class="panel"><header><h2>Schema Explorer</h2></header>
+  <div class="opt" style="justify-content:space-between">
+    <input type="text" id="schemaSearch" placeholder="Filter types/fields..." style="flex:1;max-width:300px;padding:8px 12px;border-radius:6px;border:1px solid var(--line);background:var(--card);color:var(--fg)">
+    <button class="btn" id="expandAll">Expand All</button>
+    <button class="btn" id="collapseAll">Collapse All</button>
+  </div>
+  <div class="schema-tree" id="schemaTree">No schema loaded. Click "Load Schema" or paste introspection JSON.</div>
+</section>
+</div>
+<div class="panel" style="margin-top:16px"><header><h2>Variables</h2></header>
+<textarea id="variables" spellcheck="false" placeholder='{ "id": "1" }' style="min-height:120px"></textarea>
+<div class="actions" style="border-top:none;padding-top:0">
+  <button class="btn" id="send">Execute (Mock)</button>
+  <button class="btn" id="fmtVars">Format JSON</button>
+</div>
+</div>
+<footer>No data leaves your browser. <a href="https://github.com/anooeg100-gif/digital-store">View source</a> · <a href="https://anooeg100-gif.github.io/digital-store/">← Back to store</a></footer>
+<script>
+const $=s=>document.querySelector(s);
+const query=$('#query'),variables=$('#variables'),st=$('#st'),schemaTree=$('#schemaTree'),schemaSearch=$('#schemaSearch');
+function setStatus(ok,msg){st.className='status '+(ok?'ok':'err');st.textContent=msg}
+function formatGQL(str){
+  let out=str;let indent=0;let inStr=false;let strChar='';const res=[];
+  for(let i=0;i<out.length;i++){
+    const c=out[i],n=out[i+1];
+    if(!inStr&&(c==='"'||c==="'"||c==='`')){inStr=true;strChar=c;res.push(c);continue}
+    if(inStr&&c===strChar&&out[i-1]!=='\\'){inStr=false;res.push(c);continue}
+    if(inStr){res.push(c);continue}
+    if(c==='{'||c==='['){res.push(c);indent++;res.push('\n'+'  '.repeat(indent))}
+    else if(c==='}'||c===']'){indent=Math.max(0,indent-1);res.push('\n'+'  '.repeat(indent)+c)}
+    else if(c===','||c===';'){res.push(c);res.push('\n'+'  '.repeat(indent))}
+    else if(c===':'&&n!=='='){res.push(c+' ')}
+    else if(c==='('&&i>0&&/[\w)]/.test(out[i-1])){res.push(c)}
+    else if(c===')'){res.push(c)}
+    else res.push(c)
+  }
+  return res.join('').replace(/\n\s*\n/g,'\n').trim()
+}
+function validate(){
+  const q=query.value.trim();if(!q){setStatus(false,'Empty query');return}
+  try{const formatted=formatGQL(q);if($('#formatOpt').checked)query.value=formatted;
+    if($('#addTypename').checked&&!q.includes('__typename')){
+      query.value=query.value.replace(/\{([^}]*)\}/g,(m,inner)=>inner.includes('__typename')?m:`{ ${inner.trim()} __typename }`)
+    }
+    setStatus(true,'Valid ✓')
+  }catch(e){setStatus(false,e.message)}
+}
+function loadSchema(){
+  const q=query.value.trim();if(!q.startsWith('{')&&!q.startsWith('query')){setStatus(false,'Paste introspection JSON or use a real endpoint');return}
+  try{const schema=JSON.parse(q);renderSchema(schema);setStatus(true,'Schema loaded')}catch(e){setStatus(false,'Invalid JSON: '+e.message)}}
+function renderSchema(schema){
+  const types=schema.__schema?.types||schema.data?.__schema?.types||[];
+  const filtered=types.filter(t=>!t.name.startsWith('__'));
+  let html='';
+  filtered.forEach(t=>{
+    const kind=t.kind;const name=t.name;const desc=t.description;
+    html+=`<div class="type"><strong>${name}</strong> <span style="color:var(--muted)">(${kind})</span>${desc?'<br><small>'+desc+'</small>':''}`;
+    if(t.fields){t.fields.forEach(f=>{html+=`<div class="field">${f.name}${f.args?.length?`(${f.args.map(a=>a.name+':'+a.type?.name||a.type?.ofType?.name).join(', ')})`:''}: ${f.type?.name||f.type?.ofType?.name||'?'}${f.description?' — '+f.description:''}</div>`})}
+    html+='</div>'
+  });
+  schemaTree.innerHTML=html||'No types found'
+}
+function filterSchema(){const q=schemaSearch.value.toLowerCase();schemaTree.querySelectorAll('.type').forEach(el=>{el.style.display=el.textContent.toLowerCase().includes(q)?'':'none'})}
+function expandAll(){schemaTree.querySelectorAll('.type').forEach(el=>el.style.display='')}
+function collapseAll(){schemaTree.querySelectorAll('.type').forEach(el=>{const fields=el.querySelectorAll('.field');fields.forEach(f=>f.style.display='none')})}
+$('#validate').onclick=validate;
+$('#introspect').onclick=loadSchema;
+$('#clr').onclick=()=>{query.value='';variables.value='';schemaTree.innerHTML='No schema loaded.';setStatus(true,'Cleared')};
+$('#cpy').onclick=async()=>{await navigator.clipboard.writeText(query.value);setStatus(true,'Copied')};
+$('#dwn').onclick=()=>{const b=new Blob([query.value],{type:'text/plain'});const u=URL.createObjectURL(b);const a=document.createElement('a');a.href=u;a.download='query.graphql';a.click();URL.revokeObjectURL(u)};
+$('#loadFile').onclick=()=>$('#fileIn').click();
+$('#fileIn').onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{query.value=r.result;setStatus(true,'File loaded: '+f.name)};r.readAsText(f)};
+$('#fmtVars').onclick=()=>{try{variables.value=JSON.parse(variables.value);setStatus(true,'Formatted')}catch(e){setStatus(false,e.message)}};
+$('#expandAll').onclick=expandAll;
+$('#collapseAll').onclick=collapseAll;
+schemaSearch.addEventListener('input',filterSchema);
+// Mock execute
+$('#send').onclick=()=>{setStatus(true,'Mock execute — no real endpoint connected')};
+</script></body></html>

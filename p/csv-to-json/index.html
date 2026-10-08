@@ -1,0 +1,76 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>CSV ↔ JSON Converter</title><meta name="description" content="Convert CSV to JSON and back with schema inference. Client-side only, handles large files."><style>
+:root{--bg:#0b1020;--fg:#e6e9f5;--card:#151b33;--line:#232a4a;--p:#6366f1;--ok:#34d399;--err:#f87171;--muted:#6b7280}
+*{box-sizing:border-box}body{margin:0;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;background:var(--bg);color:var(--fg);min-height:100vh}
+.wrap{max-width:1100px;margin:0 auto;padding:24px 16px}
+header{display:flex;gap:12px;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap}
+h1{font-size:clamp(20px,3vw,28px);margin:0}.sub{color:var(--muted);font-size:13px;margin-top:4px}
+.row{display:grid;gap:16px;grid-template-columns:1fr 1fr}@media (max-width:900px){.row{grid-template-columns:1fr}}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:12px;display:flex;flex-direction:column}
+.panel header{padding:12px 16px;border-bottom:1px solid var(--line);background:rgba(255,255,255,.02)}
+.panel header h2{font-size:13px;text-transform:uppercase;letter-spacing:.08em;margin:0;color:var(--muted)}
+textarea{flex:1;border:none;outline:none;background:transparent;color:var(--fg);font-family:inherit;font-size:14px;line-height:1.6;padding:16px;resize:vertical;min-height:420px}
+textarea::placeholder{color:var(--muted)}
+.actions{display:flex;gap:8px;padding:12px 16px;border-top:1px solid var(--line);flex-wrap:wrap}
+.btn{padding:8px 14px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--fg);font-size:13px;cursor:pointer;transition:.15s}
+.btn:hover{border-color:var(--p)}.btn.primary{background:var(--p);border-color:var(--p);color:#fff}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.status{padding:10px 16px;font-size:13px;display:flex;align-items:center;gap:8px;min-height:40px}
+.status.ok{color:var(--ok)}.status.err{color:var(--err)}
+.badge{display:inline-block;padding:2px 8px;border-radius:999px;font-size:11px;font-weight:700;background:rgba(52,211,153,.15);color:var(--ok);border:1px solid rgba(52,211,153,.3)}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;font-size:12px;color:var(--muted);padding:0 16px 12px}
+.opt{display:flex;gap:16px;align-items:center;padding:12px 16px;border-top:1px solid var(--line);flex-wrap:wrap;font-size:13px}
+.opt label{display:flex;align-items:center;gap:6px;cursor:pointer}
+input[type=file]{display:none}
+.footer{text-align:center;padding:24px;color:var(--muted);font-size:13px}
+a{color:var(--p)}a:hover{text-decoration:underline}
+</style></head><body><div class="wrap">
+<header><div><h1>CSV ↔ JSON Converter</h1><div class="sub">Convert with schema inference • 100% client-side • Handles large files</div></div><span class="badge">FREE</span></header>
+<div class="row">
+  <section class="panel"><header><h2>Input</h2></header>
+  <div class="opt">
+    <label><input type="checkbox" id="hasHeader" checked> First row = headers</label>
+    <label><input type="checkbox" id="inferTypes" checked> Infer types (numbers, booleans, null)</label>
+    <label><input type="checkbox" id="skipEmpty" checked> Skip empty rows</label>
+    <button class="btn" id="loadFile">Load CSV File</button>
+    <input type="file" id="fileIn" accept=".csv,.txt">
+  </div>
+  <textarea id="in" spellcheck="false" placeholder="Paste CSV here, or load a file..."></textarea>
+  <div class="actions">
+    <button class="btn primary" id="csv2json">CSV → JSON</button>
+    <button class="btn" id="json2csv">JSON → CSV</button>
+    <button class="btn" id="clr">Clear</button>
+    <button class="btn" id="cpy">Copy Result</button>
+    <button class="btn" id="dwn">Download</button>
+  </div>
+  <div class="status" id="stIn"></div>
+</section>
+  <section class="panel"><header><h2>Output</h2></header>
+  <textarea id="out" spellcheck="false" readonly placeholder="Result appears here..."></textarea>
+  <div class="kv"><span>Rows:</span><span id="rowOut">—</span><span>Cols:</span><span id="colOut">—</span><span>Size:</span><span id="szOut">—</span></div>
+</section>
+</div>
+<footer>No data leaves your browser. <a href="https://github.com/anooeg100-gif/digital-store">View source</a> · <a href="https://anooeg100-gif.github.io/digital-store/">← Back to store</a></footer>
+<script>
+const $=s=>document.querySelector(s);
+const inEl=$('#in'),outEl=$('#out'),stIn=$('#stIn'),rowOut=$('#rowOut'),colOut=$('#colOut'),szOut=$('#szOut');
+function setStatus(ok,msg){stIn.className='status '+(ok?'ok':'err');stIn.textContent=msg}
+function updateMeta(txt,rows,cols){szOut.textContent=txt.length<1024?txt.length+' B':(txt.length/1024).toFixed(1)+' KB';rowOut.textContent=rows;colOut.textContent=cols}
+function parseCSV(txt){const lines=txt.trim().split(/\r?\n/);if(!lines.length)return[];
+  const sep=',';const h=lines[0].split(sep).map(s=>s.trim());const data=[];
+  for(let i=1;i<lines.length;i++){const r=lines[i].split(sep);if(r.length!==h.length)continue;const o={};let empty=true;
+    h.forEach((k,j)=>{let v=r[j].trim();if(v==='')return;empty=false;if(inferTypes.checked){if(v==='true')v=true;else if(v==='false')v=false;else if(v==='null'||v==='')v=null;else if(/^-?\d+$/.test(v))v=parseInt(v,10);else if(/^-?\d*\.\d+$/.test(v))v=parseFloat(v)}o[k]=v});if(!empty||!skipEmpty.checked)data.push(o)}
+  return data}
+function csvToJson(){const h=hasHeader.checked;const txt=inEl.value.trim();if(!txt){setStatus(false,'Empty input');return}
+  try{const data=parseCSV(txt);outEl.value=JSON.stringify(data,null,2);updateMeta(outEl.value,data.length,h?Object.keys(data[0]||{}).length:0);setStatus(true,'Converted ✓')}catch(e){setStatus(false,e.message)}}
+function jsonToCsv(){const txt=inEl.value.trim();if(!txt){setStatus(false,'Empty input');return}
+  try{const arr=JSON.parse(txt);if(!Array.isArray(arr))throw new Error('JSON must be an array');
+    const keys=[...new Set(arr.flatMap(o=>Object.keys(o)))];const lines=[keys.join(',')];
+    arr.forEach(o=>lines.push(keys.map(k=>{const v=o[k];if(v===null||v===undefined)return'';if(typeof v==='string'&&/[,"\n]/.test(v))return '"'+v.replace(/"/g,'""')+'"';return v}).join(','));
+    outEl.value=lines.join('\n');updateMeta(outEl.value,arr.length,keys.length);setStatus(true,'Converted ✓')}catch(e){setStatus(false,e.message)}}
+$('#csv2json').onclick=csvToJson;$('#json2csv').onclick=jsonToCsv;
+$('#clr').onclick=()=>{inEl.value='';outEl.value='';setStatus(true,'Cleared');updateMeta('',0,0)};
+$('#cpy').onclick=async()=>{await navigator.clipboard.writeText(outEl.value);setStatus(true,'Copied')};
+$('#dwn').onclick=()=>{const ext=outEl.value.trim().startsWith('[')?'.json':'.csv';const b=new Blob([outEl.value],{type:ext==='.json'?'application/json':'text/csv'});const u=URL.createObjectURL(b);const a=document.createElement('a');a.href=u;a.download='converted'+ext;a.click();URL.revokeObjectURL(u)};
+$('#loadFile').onclick=()=>$('#fileIn').click();
+$('#fileIn').onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{inEl.value=r.result;setStatus(true,'File loaded: '+f.name)};r.readAsText(f)};
+</script></body></html>

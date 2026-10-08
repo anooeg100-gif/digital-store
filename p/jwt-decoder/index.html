@@ -1,0 +1,99 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>JWT Decoder & Validator</title><meta name="description" content="Decode, verify, inspect JWT tokens. Edit claims, check expiry, validate signatures. Client-side only."><style>
+:root{--bg:#0b1020;--fg:#e6e9f5;--card:#151b33;--line:#232a4a;--p:#6366f1;--ok:#34d399;--err:#f87171;--warn:#fbbf24;--muted:#6b7280}
+*{box-sizing:border-box}body{margin:0;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;background:var(--bg);color:var(--fg);min-height:100vh}
+.wrap{max-width:1000px;margin:0 auto;padding:24px 16px}
+header{display:flex;gap:12px;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap}
+h1{font-size:clamp(20px,3vw,28px);margin:0}.sub{color:var(--muted);font-size:13px;margin-top:4px}
+.row{display:grid;gap:16px;grid-template-columns:1fr 1fr}@media (max-width:900px){.row{grid-template-columns:1fr}}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:12px;display:flex;flex-direction:column}
+.panel header{padding:12px 16px;border-bottom:1px solid var(--line);background:rgba(255,255,255,.02)}
+.panel header h2{font-size:13px;text-transform:uppercase;letter-spacing:.08em;margin:0;color:var(--muted)}
+textarea{flex:1;border:none;outline:none;background:transparent;color:var(--fg);font-family:inherit;font-size:14px;line-height:1.6;padding:16px;resize:vertical;min-height:400px}
+textarea::placeholder{color:var(--muted)}
+.actions{display:flex;gap:8px;padding:12px 16px;border-top:1px solid var(--line);flex-wrap:wrap}
+.btn{padding:8px 14px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--fg);font-size:13px;cursor:pointer;transition:.15s}
+.btn:hover{border-color:var(--p)}.btn.primary{background:var(--p);border-color:var(--p);color:#fff}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.status{padding:10px 16px;font-size:13px;display:flex;align-items:center;gap:8px;min-height:40px}
+.status.ok{color:var(--ok)}.status.err{color:var(--err)}.status.warn{color:var(--warn)}
+.badge{display:inline-block;padding:2px 8px;border-radius:999px;font-size:11px;font-weight:700;background:rgba(52,211,153,.15);color:var(--ok);border:1px solid rgba(52,211,153,.3)}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;font-size:12px;color:var(--muted);padding:0 16px 12px}
+.footer{text-align:center;padding:24px;color:var(--muted);font-size:13px}
+a{color:var(--p)}a:hover{text-decoration:underline}
+.claim{display:flex;gap:8px;margin:8px 0;padding:8px 12px;background:rgba(255,255,255,.03);border-radius:6px;border:1px solid var(--line)}
+.claim label{width:140px;color:var(--muted);font-size:12px;flex-shrink:0}
+.claim input{flex:1;background:transparent;border:1px solid var(--line);border-radius:4px;padding:4px 8px;color:var(--fg);font-family:inherit}
+.claim.expired{border-color:var(--err);background:rgba(248,113,113,.1)}
+.claim.standard{color:var(--p)}
+</style></head><body><div class="wrap">
+<header><div><h1>JWT Decoder & Validator</h1><div class="sub">Decode • Verify signature • Edit claims • Check expiry — 100% client-side</div></div><span class="badge">FREE</span></header>
+<div class="row">
+  <section class="panel"><header><h2>JWT Token</h2></header>
+  <textarea id="jwt" spellcheck="false" placeholder="Paste JWT token here (header.payload.signature)..."></textarea>
+  <div class="actions">
+    <button class="btn primary" id="decode">Decode</button>
+    <button class="btn" id="verify">Verify Signature</button>
+    <button class="btn" id="clr">Clear</button>
+    <button class="btn" id="cpy">Copy Payload</button>
+  </div>
+  <div class="status" id="st"></div>
+</section>
+  <section class="panel"><header><h2>Verification</h2></header>
+  <div class="opt" style="display:flex;gap:16px;padding:12px 16px;border-bottom:1px solid var(--line);flex-wrap:wrap;font-size:13px">
+    <label>Secret/Public Key: <input type="text" id="secret" placeholder="HS256 secret or PEM public key" style="flex:1;margin-left:8px;padding:6px 10px;border-radius:6px;border:1px solid var(--line);background:var(--bg);color:var(--fg)"></label>
+    <label><input type="checkbox" id="allowNone" checked> Allow "none" alg (unsafe)</label>
+  </div>
+  <div class="kv" id="verifyOut" style="padding:12px 16px"></div>
+</section>
+</div>
+<div class="panel" style="margin-top:16px"><header><h2>Decoded Token</h2></header>
+<div class="kv" id="meta"></div>
+<div id="headerClaims"></div>
+<div id="payloadClaims"></div>
+<pre id="raw" style="margin:16px;padding:16px;background:rgba(0,0,0,.3);border-radius:8px;overflow:auto;font-size:13px;display:none"></pre>
+</div>
+<footer>No data leaves your browser. <a href="https://github.com/anooeg100-gif/digital-store">View source</a> · <a href="https://anooeg100-gif.github.io/digital-store/">← Back to store</a></footer>
+<script>
+const $=s=>document.querySelector(s);
+const jwt=$('#jwt'),st=$('#st'),secret=$('#secret'),allowNone=$('#allowNone');
+const hc=$('#headerClaims'),pc=$('#payloadClaims'),meta=$('#meta'),raw=$('#raw'),verifyOut=$('#verifyOut');
+function setStatus(ok,msg,cls=''){st.className='status '+(ok?'ok':cls?'warn':'err');st.textContent=msg}
+function b64urlDecode(s){s=s.replace(/-/g,'+').replace(/_/g,'/');switch(s.length%4){case 2:s+='==';break;case 3:s+='=';break}return decodeURIComponent(escape(atob(s)))}
+function b64urlEncode(s){return btoa(unescape(encodeURIComponent(s))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=/g,'')}
+function parseJwt(token){const parts=token.split('.');if(parts.length!==3)throw new Error('Invalid JWT format (need 3 parts)');
+  return {header:JSON.parse(b64urlDecode(parts[0])),payload:JSON.parse(b64urlDecode(parts[1])),signature:parts[2],rawHeader:parts[0],rawPayload:parts[1]}}
+function renderClaims(title,obj,container,editable){
+  container.innerHTML='';Object.entries(obj).forEach(([k,v])=>{
+    const div=document.createElement('div');div.className='claim'+(k==='exp'||k==='nbf'||k==='iat'?' standard':'');
+    const isStd=['iss','sub','aud','exp','nbf','iat','jti'].includes(k);
+    const val=typeof v==='object'?JSON.stringify(v,null,2):String(v);
+    div.innerHTML=`<label${isStd?' title="Standard claim"':''}>${escapeHtml(k)}</label><input type="text" value="${escapeHtml(val)}" ${editable?'':'readonly'}>`;
+    if(k==='exp'||k==='nbf'||k==='iat'){const dt=v?new Date(v*1000):null;div.innerHTML+=`<span style="color:var(--muted);font-size:11px;margin-left:8px">${dt?dt.toISOString():'invalid'}</span>`;
+      if(k==='exp'&&dt&&dt<new Date())div.classList.add('expired')}
+    container.appendChild(div)
+  })}
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({ '&':'&','<':'<','>':'>','"':'"',"'":''' }[c]))}
+function checkExpiry(payload){const now=Math.floor(Date.now()/1000);const msgs=[];
+  if(payload.exp&&payload.exp<now)msgs.push({type:'err',txt:`⚠ EXPIRED ${Math.floor((now-payload.exp)/60)} min ago`});
+  if(payload.nbf&&payload.nbf>now)msgs.push({type:'warn',txt:`⏳ Not valid until ${new Date(payload.nbf*1000).toLocaleString()}`});
+  return msgs}
+async function verifySig(token,decoded){const sec=secret.value.trim();if(!sec){verifyOut.innerHTML='<span style="color:var(--muted)">Enter secret/key to verify</span>';return}
+  const [h,p,sig]=token.split('.');const data=h+'.'+p;
+  let key;try{if(sec.includes('-----BEGIN')){key=await importKey(sec,'public')}else{key=await importKey(sec,'hmac')}}catch(e){verifyOut.innerHTML=`<span style="color:var(--err)">Key import failed: ${e.message}</span>`;return}
+  try{const ok=await crypto.subtle.verify({name:decoded.header.alg.startsWith('HS')?'HMAC':decoded.header.alg.startsWith('RS')?'RSASSA-PKCS1-v1_5':'ECDSA',hash:{name:decoded.header.alg.includes('256')?'SHA-256':'SHA-384'}},key,base64urlToBuf(sig),stringToBuf(data));
+    verifyOut.innerHTML=ok?'<span style="color:var(--ok)">✓ Signature VALID</span>':'<span style="color:var(--err)">✗ Signature INVALID</span>'}catch(e){verifyOut.innerHTML=`<span style="color:var(--err)">Verify error: ${e.message}</span>`}}
+async function importKey(pem,type){const b=pem.replace(/-----(BEGIN|END) (PUBLIC KEY|PRIVATE KEY)-----/g,'').replace(/\s/g,'');const buf=Uint8Array.from(atob(b),c=>c.charCodeAt(0));
+  if(type==='hmac')return crypto.subtle.importKey('raw',buf,{name:'HMAC',hash:'SHA-256'},false,['verify','sign']);
+  return crypto.subtle.importKey('spki',buf,{name:'RSASSA-PKCS1-v1_5',hash:'SHA-256'},false,['verify'])}
+function base64urlToBuf(s){s=s.replace(/-/g,'+').replace(/_/g,'/');while(s.length%4)s+='=';return Uint8Array.from(atob(s),c=>c.charCodeAt(0))}
+function stringToBuf(s){return new TextEncoder().encode(s)}
+$('#decode').onclick=()=>{const t=jwt.value.trim();if(!t){setStatus(false,'Paste a JWT token');return}
+  try{const d=parseJwt(t);renderClaims('Header',d.header,hc,false);renderClaims('Payload',d.payload,pc,true);
+    meta.innerHTML=`<span>Algorithm:</span><span>${escapeHtml(d.header.alg||'none')}</span><span>Type:</span><span>${escapeHtml(d.header.typ||'JWT')}</span>`;
+    const exp=checkExpiry(d.payload);exp.forEach(e=>setStatus(e.type==='err'?false:true,e.txt,e.type));
+    raw.textContent=JSON.stringify(d,null,2);raw.style.display='block';setStatus(true,'Decoded ✓')}catch(e){setStatus(false,e.message)}}
+$('#verify').onclick=()=>{const t=jwt.value.trim();if(!t){setStatus(false,'Decode first');return}
+  try{const d=parseJwt(t);verifySig(t,d)}catch(e){setStatus(false,e.message)}}
+$('#clr').onclick=()=>{jwt.value='';secret.value='';hc.innerHTML='';pc.innerHTML='';meta.innerHTML='';raw.style.display='none';verifyOut.innerHTML='';setStatus(true,'Cleared')};
+$('#cpy').onclick=async()=>{const t=jwt.value.trim();if(!t)return;try{const d=parseJwt(t);await navigator.clipboard.writeText(JSON.stringify(d.payload,null,2));setStatus(true,'Payload copied')}catch(e){setStatus(false,e.message)}};
+</script></body></html>

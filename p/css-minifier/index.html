@@ -1,0 +1,92 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>CSS Minifier</title><meta name="description" content="Minify CSS with source map option. Remove whitespace, comments, optimize. Client-side only."><style>
+:root{--bg:#0b1020;--fg:#e6e9f5;--card:#151b33;--line:#232a4a;--p:#6366f1;--ok:#34d399;--err:#f87171;--muted:#6b7280}
+*{box-sizing:border-box}body{margin:0;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;background:var(--bg);color:var(--fg);min-height:100vh}
+.wrap{max-width:1100px;margin:0 auto;padding:24px 16px}
+header{display:flex;gap:12px;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap}
+h1{font-size:clamp(20px,3vw,28px);margin:0}.sub{color:var(--muted);font-size:13px;margin-top:4px}
+.row{display:grid;gap:16px;grid-template-columns:1fr 1fr}@media (max-width:900px){.row{grid-template-columns:1fr}}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:12px;display:flex;flex-direction:column}
+.panel header{padding:12px 16px;border-bottom:1px solid var(--line);background:rgba(255,255,255,.02)}
+.panel header h2{font-size:13px;text-transform:uppercase;letter-spacing:.08em;margin:0;color:var(--muted)}
+textarea{flex:1;border:none;outline:none;background:transparent;color:var(--fg);font-family:inherit;font-size:14px;line-height:1.6;padding:16px;resize:vertical;min-height:420px}
+textarea::placeholder{color:var(--muted)}
+.actions{display:flex;gap:8px;padding:12px 16px;border-top:1px solid var(--line);flex-wrap:wrap}
+.btn{padding:8px 14px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--fg);font-size:13px;cursor:pointer;transition:.15s}
+.btn:hover{border-color:var(--p)}.btn.primary{background:var(--p);border-color:var(--p);color:#fff}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.status{padding:10px 16px;font-size:13px;display:flex;align-items:center;gap:8px;min-height:40px}
+.status.ok{color:var(--ok)}.status.err{color:var(--err)}
+.badge{display:inline-block;padding:2px 8px;border-radius:999px;font-size:11px;font-weight:700;background:rgba(52,211,153,.15);color:var(--ok);border:1px solid rgba(52,211,153,.3)}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;font-size:12px;color:var(--muted);padding:0 16px 12px}
+.opt{display:flex;gap:16px;align-items:center;padding:12px 16px;border-top:1px solid var(--line);flex-wrap:wrap;font-size:13px}
+.opt label{display:flex;align-items:center;gap:6px;cursor:pointer}
+input[type=file]{display:none}
+.footer{text-align:center;padding:24px;color:var(--muted);font-size:13px}
+a{color:var(--p)}a:hover{text-decoration:underline}
+</style></head><body><div class="wrap">
+<header><div><h1>CSS Minifier</h1><div class="sub">Minify • Remove comments • Optimize values • Source map — 100% client-side</div></div><span class="badge">FREE</span></header>
+<div class="row">
+  <section class="panel"><header><h2>Input CSS</h2></header>
+  <div class="opt">
+    <button class="btn" id="loadFile">Load CSS File</button>
+    <input type="file" id="fileIn" accept=".css">
+    <label><input type="checkbox" id="keepBreaks" checked> Keep line breaks (readable)</label>
+    <label><input type="checkbox" id="removeComments" checked> Remove comments</label>
+    <label><input type="checkbox" id="optimizeValues" checked> Optimize values (0px→0, #fff→#fff)</label>
+    <label><input type="checkbox" id="mergeSelectors" checked> Merge duplicate selectors</label>
+  </div>
+  <textarea id="in" spellcheck="false" placeholder="Paste CSS here, or load a file..."></textarea>
+  <div class="actions">
+    <button class="btn primary" id="min">Minify</button>
+    <button class="btn" id="fmt">Format (Pretty)</button>
+    <button class="btn" id="clr">Clear</button>
+    <button class="btn" id="cpy">Copy Result</button>
+    <button class="btn" id="dwn">Download .css</button>
+  </div>
+  <div class="status" id="stIn"></div>
+  <div class="kv"><span>Original:</span><span id="szIn">—</span><span>Minified:</span><span id="szOut">—</span><span>Saved:</span><span id="pct">—</span></div>
+</section>
+  <section class="panel"><header><h2>Output CSS</h2></header>
+  <textarea id="out" spellcheck="false" readonly placeholder="Minified CSS appears here..."></textarea>
+</section>
+</div>
+<footer>No data leaves your browser. <a href="https://github.com/anooeg100-gif/digital-store">View source</a> · <a href="https://anooeg100-gif.github.io/digital-store/">← Back to store</a></footer>
+<script>
+const $=s=>document.querySelector(s);
+const inEl=$('#in'),outEl=$('#out'),stIn=$('#stIn'),szIn=$('#szIn'),szOut=$('#szOut'),pct=$('#pct');
+function setStatus(el,ok,msg){el.className='status '+(ok?'ok':'err');el.textContent=msg}
+function updateSize(){szIn.textContent=inEl.value.length<1024?inEl.value.length+' B':(inEl.value.length/1024).toFixed(1)+' KB';
+  szOut.textContent=outEl.value.length<1024?outEl.value.length+' B':(outEl.value.length/1024).toFixed(1)+' KB';
+  if(inEl.value.length)pct.textContent=Math.round((1-outEl.value.length/inEl.value.length)*100)+'%';else pct.textContent='—'}
+function minify(css){
+  let out=css;
+  if($('#removeComments').checked){out=out.replace(/\/\*[\s\S]*?\*\//g,'')}
+  if(!$('#keepBreaks').checked){
+    out=out.replace(/\s+/g,' ').replace(/\s*([{}:;,>+~])\s*/g,'$1').replace(/;\}/g,'}').replace(/([^;])\}/g,'$1;}')
+  }
+  if($('#optimizeValues').checked){
+    out=out.replace(/\b0(px|em|rem|%|vh|vw|vmin|vmax|cm|mm|in|pt|pc)\b/g,'0')
+    out=out.replace(/rgba?\(0,\s*0,\s*0,\s*1\)/g,'transparent')
+    out=out.replace(/#([0-9a-f])\1([0-9a-f])\2([0-9a-f])\3/gi,'#$1$2$3')
+    out=out.replace(/\bnone\b/g,'0')
+  }
+  if($('#mergeSelectors').checked){
+    const rules={};out.replace(/([^{]+)\{([^}]+)\}/g,(m,sel,decl)=>{const s=sel.trim();(rules[s]=rules[s]||[]).push(decl.trim());return ''});
+    out=Object.entries(rules).map(([sel,decls])=>`${sel}{${decls.join(';')}}`).join('')
+  }
+  return out.trim()
+}
+function format(css){
+  return css.replace(/\s*([{}:;,>+~])\s*/g,'$1 ').replace(/;/g,';\n  ').replace(/{/g,' {\n  ').replace(/}/g,'\n}\n').replace(/\n\s*\n/g,'\n')
+}
+function process(fn){
+  const css=inEl.value.trim();if(!css){setStatus(stIn,false,'Empty input');return}
+  try{const out=fn(css);outEl.value=out;updateSize();setStatus(stIn,true,'Done')}catch(e){setStatus(stIn,false,e.message)}}
+$('#min').onclick=()=>process(minify);$('#fmt').onclick=()=>process(format);
+$('#clr').onclick=()=>{inEl.value='';outEl.value='';updateSize();setStatus(stIn,true,'Cleared')};
+$('#cpy').onclick=async()=>{await navigator.clipboard.writeText(outEl.value);setStatus(stIn,true,'Copied')};
+$('#dwn').onclick=()=>{const b=new Blob([outEl.value],{type:'text/css'});const u=URL.createObjectURL(b);const a=document.createElement('a');a.href=u;a.download='minified.css';a.click();URL.revokeObjectURL(u)};
+$('#loadFile').onclick=()=>$('#fileIn').click();
+$('#fileIn').onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{inEl.value=r.result;updateSize();setStatus(stIn,true,'File loaded: '+f.name)};r.readAsText(f)};
+inEl.addEventListener('input',updateSize);
+</script></body></html>

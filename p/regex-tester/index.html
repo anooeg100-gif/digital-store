@@ -1,0 +1,118 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Regex Tester & Explainer</title><meta name="description" content="Test, debug, explain regex with code generation for JS/Python/Go. Client-side only."><style>
+:root{--bg:#0b1020;--fg:#e6e9f5;--card:#151b33;--line:#232a4a;--p:#6366f1;--ok:#34d399;--err:#f87171;--muted:#6b7280;--match:#fbbf24}
+*{box-sizing:border-box}body{margin:0;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;background:var(--bg);color:var(--fg);min-height:100vh}
+.wrap{max-width:1100px;margin:0 auto;padding:24px 16px}
+header{display:flex;gap:12px;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap}
+h1{font-size:clamp(20px,3vw,28px);margin:0}.sub{color:var(--muted);font-size:13px;margin-top:4px}
+.row{display:grid;gap:16px;grid-template-columns:1fr 1fr}@media (max-width:900px){.row{grid-template-columns:1fr}}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:12px;display:flex;flex-direction:column}
+.panel header{padding:12px 16px;border-bottom:1px solid var(--line);background:rgba(255,255,255,.02)}
+.panel header h2{font-size:13px;text-transform:uppercase;letter-spacing:.08em;margin:0;color:var(--muted)}
+textarea,input[type=text]{flex:1;border:none;outline:none;background:transparent;color:var(--fg);font-family:inherit;font-size:14px;line-height:1.6;padding:16px;resize:vertical;min-height:200px;width:100%}
+input[type=text]{min-height:48px;padding:12px 16px}
+textarea::placeholder,input::placeholder{color:var(--muted)}
+.actions{display:flex;gap:8px;padding:12px 16px;border-top:1px solid var(--line);flex-wrap:wrap}
+.btn{padding:8px 14px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--fg);font-size:13px;cursor:pointer;transition:.15s}
+.btn:hover{border-color:var(--p)}.btn.primary{background:var(--p);border-color:var(--p);color:#fff}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.status{padding:10px 16px;font-size:13px;display:flex;align-items:center;gap:8px;min-height:40px}
+.status.ok{color:var(--ok)}.status.err{color:var(--err)}
+.badge{display:inline-block;padding:2px 8px;border-radius:999px;font-size:11px;font-weight:700;background:rgba(52,211,153,.15);color:var(--ok);border:1px solid rgba(52,211,153,.3)}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;font-size:12px;color:var(--muted);padding:0 16px 12px}
+.opt{display:flex;gap:16px;align-items:center;padding:12px 16px;border-top:1px solid var(--line);flex-wrap:wrap;font-size:13px}
+.opt label{display:flex;align-items:center;gap:6px;cursor:pointer}
+pre{margin:0;padding:16px;background:rgba(0,0,0,.3);border-radius:8px;overflow:auto;font-size:13px;line-height:1.6}
+code{font-family:inherit}
+.match-highlight{background:rgba(251,191,36,.3);border-radius:2px}
+.footer{text-align:center;padding:24px;color:var(--muted);font-size:13px}
+a{color:var(--p)}a:hover{text-decoration:underline}
+</style></head><body><div class="wrap">
+<header><div><h1>Regex Tester & Explainer</h1><div class="sub">Test • Explain • Generate code (JS / Python / Go) — 100% client-side</div></div><span class="badge">FREE</span></header>
+<div class="row">
+  <section class="panel"><header><h2>Pattern & Flags</h2></header>
+  <div class="opt">
+    <label><input type="checkbox" id="g" checked> Global (g)</label>
+    <label><input type="checkbox" id="i"> Case-insensitive (i)</label>
+    <label><input type="checkbox" id="m"> Multiline (m)</label>
+    <label><input type="checkbox" id="s"> DotAll (s)</label>
+    <label><input type="checkbox" id="u"> Unicode (u)</label>
+    <label><input type="checkbox" id="y"> Sticky (y)</label>
+  </div>
+  <input type="text" id="pattern" placeholder="Enter regex pattern (without delimiters)..." spellcheck="false">
+  <div class="actions">
+    <button class="btn primary" id="test">Test / Explain</button>
+    <button class="btn" id="gen">Generate Code</button>
+    <button class="btn" id="clr">Clear</button>
+  </div>
+  <div class="status" id="stPat"></div>
+  <div class="kv"><span>Pattern:</span><span id="patInfo">—</span></div>
+</section>
+  <section class="panel"><header><h2>Test String</h2></header>
+  <textarea id="testStr" spellcheck="false" placeholder="Paste test string here..."></textarea>
+  <div class="actions">
+    <button class="btn" id="matchAll">Find All Matches</button>
+    <button class="btn" id="replace">Replace All</button>
+    <input type="text" id="repl" placeholder="Replacement ($1, $&, etc.)" style="flex:1">
+  </div>
+  <div class="status" id="stTest"></div>
+</section>
+</div>
+<div class="panel" style="margin-top:16px"><header><h2>Matches & Explanation</h2></header>
+<pre id="matches"></pre>
+<div class="kv"><span>Matches:</span><span id="mcnt">0</span><span>Groups/Match:</span><span id="gcnt">0</span></div>
+</div>
+<div class="panel" style="margin-top:16px;display:none" id="codePanel"><header><h2>Generated Code</h2></header>
+<pre id="codeOut"></pre>
+</div>
+<footer>No data leaves your browser. <a href="https://github.com/anooeg100-gif/digital-store">View source</a> · <a href="https://anooeg100-gif.github.io/digital-store/">← Back to store</a></footer>
+<script>
+const $=s=>document.querySelector(s);
+const pat=$('#pattern'),testStr=$('#testStr'),matches=$('#matches'),codeOut=$('#codeOut'),codePanel=$('#codePanel');
+const stPat=$('#stPat'),stTest=$('#stTest'),mcnt=$('#mcnt'),gcnt=$('#gcnt'),patInfo=$('#patInfo');
+function setStatus(el,ok,msg){el.className='status '+(ok?'ok':'err');el.textContent=msg}
+function getFlags(){let f='';if($('#g').checked)f+='g';if($('#i').checked)f+='i';if($('#m').checked)f+='m';if($('#s').checked)f+='s';if($('#u').checked)f+='u';if($('#y').checked)f+='y';return f}
+function escapeHtml(s){return s.replace(/[&<>"']/g,c=>({ '&':'&','<':'<','>':'>','"':'"',"'":''' }[c]))}
+function explainRegex(pattern,flags){
+  const tokens=[];let i=0;
+  while(i<pattern.length){
+    const c=pattern[i];
+    if(c==='\\'&&i+1<pattern.length){tokens.push({type:'escape',val:pattern[i+1]});i+=2;continue}
+    if(c==='['){let j=i+1,cls='';while(j<pattern.length&&pattern[j]!==']'){cls+=pattern[j];j++}tokens.push({type:'class',val:cls});i=j+1;continue}
+    if(c==='('){let j=i+1,grp=0;while(j<pattern.length){if(pattern[j]==='(')grp++;else if(pattern[j]===')'){if(grp===0)break;grp--}j++}tokens.push({type:'group',val:pattern.slice(i+1,j)});i=j+1;continue}
+    if('*+?'.includes(c)){tokens.push({type:'quantifier',val:c});i++;continue}
+    if(c==='.'||c==='^'||c==='$'||c==='|'){tokens.push({type:'anchor',val:c});i++;continue}
+    tokens.push({type:'literal',val:c});i++;
+  }
+  return tokens.map(t=>`<span style="color:${t.type==='literal'?'#a5b4fc':t.type==='escape'?'#f472b6':t.type==='class'?'#6ee7b7':t.type==='group'?'#fbbf24':t.type==='quantifier'?'#f87171':'#fbbf24'}">${escapeHtml(t.val)}</span>`).join('');
+}
+function runTest(){const p=pat.value.trim();if(!p){setStatus(stPat,false,'Enter a pattern');return}
+  try{new RegExp(p,getFlags());setStatus(stPat,true,'Valid regex');patInfo.innerHTML=explainRegex(p,getFlags())}catch(e){setStatus(stPat,false,'Invalid: '+e.message);return}
+  const s=testStr.value;const re=new RegExp(p,getFlags());
+  if(!s){matches.textContent='(enter test string to see matches)';mcnt.textContent=0;gcnt.textContent=0;return}
+  const out=[];let m,total=0;while((m=re.exec(s))!==null){
+    total++;const groups=m.slice(1);gcnt.textContent=groups.length;
+    let html='Match '+total+' at index '+m.index+': ';
+    const before=escapeHtml(s.slice(0,m.index));
+    const match=escapeHtml(m[0]);
+    const after=escapeHtml(s.slice(m.index+m[0].length));
+    html+=before+'<mark class="match-highlight">'+match+'</mark>'+after;
+    if(groups.length){html+='\n  Groups: '+groups.map((g,i)=>`$${i+1}="${escapeHtml(g)}"`).join(', ')}
+    out.push(html);
+    if(!re.global)break
+  }
+  matches.innerHTML=out.join('\n\n')||'(no matches)';mcnt.textContent=total;
+}
+function genCode(){const p=pat.value.trim();if(!p){setStatus(stPat,false,'Enter a pattern first');return}
+  try{new RegExp(p,getFlags())}catch(e){setStatus(stPat,false,'Invalid regex');return}
+  const f=getFlags();const lang=$('#lang')?.value||'js';
+  let code='';
+  if(lang==='js'){code=`const re = /${p}/${f};\nconst str = \`${testStr.value.replace(/`/g,'\\`')}\`;\n\n// Test\nconsole.log(re.test(str)); // true/false\n\n// Match all\nconst matches = [...str.matchAll(re)];\nmatches.forEach(m => console.log(m[0], m.index, m.groups));\n\n// Replace\nconst replaced = str.replace(re, 'REPLACEMENT');`}
+  else if(lang==='py'){code=`import re\npattern = r\"${p}\"\nflags = 0\n${'flags |= re.IGNORECASE\n' if 'i' in f else ''}${'' if 'm' not in f else 'flags |= re.MULTILINE\n'}${'' if 's' not in f else 'flags |= re.DOTALL\n'}text = \"\"\"${testStr.value.replace(/"""/g,'\\"\\"\\"')}\"\"\"\n\n# Test\nprint(bool(re.search(pattern, text, flags)))\n\n# Find all\nfor m in re.finditer(pattern, text, flags):\n    print(m.group(), m.start(), m.groups())\n\n# Replace\nreplaced = re.sub(pattern, 'REPLACEMENT', text, flags=flags)`}
+  else {code=`package main\nimport ("fmt"; "regexp")\nfunc main() {\n    re := regexp.MustCompile(\`${p}\`)\n    text := \`${testStr.value.replace(/`/g,'\\`')}\`\n\n    // Test\n    fmt.Println(re.MatchString(text))\n\n    // Find all\n    matches := re.FindAllStringSubmatchIndex(text, -1)\n    for _, m := range matches {\n        fmt.Println(text[m[0]:m[1]])\n    }\n\n    // Replace\n    replaced := re.ReplaceAllString(text, "REPLACEMENT")\n    fmt.Println(replaced)\n}`}
+  codeOut.textContent=code;codePanel.style.display='block';setStatus(stPat,true,'Code generated')
+}
+function addLangSel(){const sel=document.createElement('select');sel.id='lang';sel.innerHTML='<option value="js">JavaScript</option><option value="py">Python</option><option value="go">Go</option>';sel.style.cssText='padding:6px 10px;border-radius:6px;border:1px solid var(--line);background:var(--card);color:var(--fg);font-size:13px';$('#gen').insertAdjacentElement('afterend',sel)}
+$('#test').onclick=runTest;$('#matchAll').onclick=runTest;$('#gen').onclick=genCode;$('#replace').onclick=()=>{const p=pat.value.trim(),r=$('#repl').value,s=testStr.value;if(!p||!s)return;try{const re=new RegExp(p,getFlags());outEl.value=s.replace(re,r);setStatus(stTest,true,'Replaced')}catch(e){setStatus(stTest,false,e.message)}};
+$('#clr').onclick=()=>{pat.value='';testStr.value='';matches.textContent='';codeOut.textContent='';codePanel.style.display='none';setStatus(stPat,true,'Cleared');setStatus(stTest,true,'Cleared');patInfo.textContent='—';mcnt.textContent=0;gcnt.textContent=0};
+addLangSel();
+</script></body></html>

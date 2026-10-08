@@ -1,0 +1,96 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Base64 / URL / Hex Encoder & Decoder</title><meta name="description" content="Encode/decode Base64, Base64URL, URL, Hex. File drop support. Client-side only."><style>
+:root{--bg:#0b1020;--fg:#e6e9f5;--card:#151b33;--line:#232a4a;--p:#6366f1;--ok:#34d399;--err:#f87171;--muted:#6b7280}
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,monospace;background:var(--bg);color:var(--fg);min-height:100vh}
+.wrap{max-width:1000px;margin:0 auto;padding:24px 16px}
+header{display:flex;gap:12px;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap}
+h1{font-size:clamp(20px,3vw,28px);margin:0}.sub{color:var(--muted);font-size:13px;margin-top:4px}
+.row{display:grid;gap:16px;grid-template-columns:1fr 1fr}@media (max-width:900px){.row{grid-template-columns:1fr}}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:12px;display:flex;flex-direction:column}
+.panel header{padding:12px 16px;border-bottom:1px solid var(--line);background:rgba(255,255,255,.02)}
+.panel header h2{font-size:13px;text-transform:uppercase;letter-spacing:.08em;margin:0;color:var(--muted)}
+textarea{flex:1;border:none;outline:none;background:transparent;color:var(--fg);font-family:inherit;font-size:14px;line-height:1.6;padding:16px;resize:vertical;min-height:380px}
+textarea::placeholder{color:var(--muted)}
+.actions{display:flex;gap:8px;padding:12px 16px;border-top:1px solid var(--line);flex-wrap:wrap}
+.btn{padding:8px 14px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--fg);font-size:13px;cursor:pointer;transition:.15s}
+.btn:hover{border-color:var(--p)}.btn.primary{background:var(--p);border-color:var(--p);color:#fff}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.status{padding:10px 16px;font-size:13px;display:flex;align-items:center;gap:8px;min-height:40px}
+.status.ok{color:var(--ok)}.status.err{color:var(--err)}
+.badge{display:inline-block;padding:2px 8px;border-radius:999px;font-size:11px;font-weight:700;background:rgba(52,211,153,.15);color:var(--ok);border:1px solid rgba(52,211,153,.3)}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;font-size:12px;color:var(--muted);padding:0 16px 12px}
+.opt{display:flex;gap:16px;align-items:center;padding:12px 16px;border-top:1px solid var(--line);flex-wrap:wrap;font-size:13px}
+.opt label{display:flex;align-items:center;gap:6px;cursor:pointer}
+input[type=file]{display:none}
+.dropzone{border:2px dashed var(--line);border-radius:8px;padding:24px;text-align:center;color:var(--muted);margin:8px 0;cursor:pointer;transition:.15s}
+.dropzone:hover,.dropzone.drag{border-color:var(--p);color:var(--p);background:rgba(99,102,241,.05)}
+.footer{text-align:center;padding:24px;color:var(--muted);font-size:13px}
+a{color:var(--p)}a:hover{text-decoration:underline}
+</style></head><body><div class="wrap">
+<header><div><h1>Base64 / URL / Hex Encoder & Decoder</h1><div class="sub">Base64 • Base64URL • URL • Hex — File drop • Batch process — 100% client-side</div></div><span class="badge">FREE</span></header>
+<div class="row">
+  <section class="panel"><header><h2>Input</h2></header>
+  <div class="opt">
+    <label>Mode:
+      <select id="mode" style="padding:6px 10px;border-radius:6px;border:1px solid var(--line);background:var(--card);color:var(--fg)">
+        <option value="b64enc">Base64 Encode</option>
+        <option value="b64dec">Base64 Decode</option>
+        <option value="b64urlenc">Base64URL Encode</option>
+        <option value="b64urldec">Base64URL Decode</option>
+        <option value="urlenc">URL Encode</option>
+        <option value="urldec">URL Decode</option>
+        <option value="hexenc">Hex Encode</option>
+        <option value="hexdec">Hex Decode</option>
+      </select>
+    </label>
+    <label><input type="checkbox" id="batch" checked> Batch (line by line)</label>
+    <label><input type="checkbox" id="strict"> Strict decode (throw on error)</label>
+  </div>
+  <div class="dropzone" id="drop">Drop file here, or <button class="btn" id="loadFile" style="margin-left:8px">Load File</button><input type="file" id="fileIn"></div>
+  <textarea id="in" spellcheck="false" placeholder="Paste text here, or drop a file..."></textarea>
+  <div class="actions">
+    <button class="btn primary" id="proc">Process</button>
+    <button class="btn" id="swap">Swap</button>
+    <button class="btn" id="clr">Clear</button>
+    <button class="btn" id="cpy">Copy Result</button>
+    <button class="btn" id="dwn">Download</button>
+  </div>
+  <div class="status" id="st"></div>
+</section>
+  <section class="panel"><header><h2>Output</h2></header>
+  <textarea id="out" spellcheck="false" readonly placeholder="Result appears here..."></textarea>
+  <div class="kv"><span>Lines:</span><span id="ln">—</span><span>Size:</span><span id="sz">—</span></div>
+</section>
+</div>
+<footer>No data leaves your browser. <a href="https://github.com/anooeg100-gif/digital-store">View source</a> · <a href="https://anooeg100-gif.github.io/digital-store/">← Back to store</a></footer>
+<script>
+const $=s=>document.querySelector(s);
+const inEl=$('#in'),outEl=$('#out'),st=$('#st'),ln=$('#ln'),sz=$('#sz'),drop=$('#drop');
+function setStatus(ok,msg){st.className='status '+(ok?'ok':'err');st.textContent=msg}
+function updateMeta(){ln.textContent=outEl.value.split('\n').length;sz.textContent=outEl.value.length<1024?outEl.value.length+' B':(outEl.value.length/1024).toFixed(1)+' KB'}
+function b64enc(s){return btoa(unescape(encodeURIComponent(s)))}
+function b64dec(s){try{return decodeURIComponent(escape(atob(s)))}catch(e){return null}}
+function b64urlenc(s){return b64enc(s).replace(/\+/g,'-').replace(/\//g,'_').replace(/=/g,'')}
+function b64urldec(s){s=s.replace(/-/g,'+').replace(/_/g,'/');while(s.length%4)s+='=';try{return decodeURIComponent(escape(atob(s)))}catch(e){return null}}
+function urlenc(s){return encodeURIComponent(s)}
+function urldec(s){try{return decodeURIComponent(s)}catch(e){return null}}
+function hexenc(s){return Array.from(new TextEncoder().encode(s)).map(b=>b.toString(16).padStart(2,'0')).join('')}
+function hexdec(s){try{const m=s.match(/.{1,2}/g);return new TextDecoder().decode(Uint8Array.from(m.map(b=>parseInt(b,16))))}catch(e){return null}}
+function process(){
+  const mode=$('#mode').value;const batch=$('#batch').checked;const strict=$('#strict').checked;
+  const lines=batch?inEl.value.split('\n').filter(l=>l.trim()):[inEl.value];
+  const fn={b64enc,b64dec,b64urlenc,b64urldec,urlenc,urldec,hexenc,hexdec}[mode];
+  if(!fn){setStatus(false,'Unknown mode');return}
+  const out=lines.map(l=>{const r=fn(l.trim());return r===null?(strict?'ERROR':l+' (decode failed)') : r}).join('\n');
+  outEl.value=out;updateMeta();setStatus(true,'Done')
+}
+function swap(){const t=inEl.value;inEl.value=outEl.value;outEl.value=t;updateMeta()}
+$('#proc').onclick=process;$('#swap').onclick=swap;
+$('#clr').onclick=()=>{inEl.value='';outEl.value='';updateMeta();setStatus(true,'Cleared')};
+$('#cpy').onclick=async()=>{await navigator.clipboard.writeText(outEl.value);setStatus(true,'Copied')};
+$('#dwn').onclick=()=>{const b=new Blob([outEl.value],{type:'text/plain'});const u=URL.createObjectURL(b);const a=document.createElement('a');a.href=u;a.download='output.txt';a.click();URL.revokeObjectURL(u)};
+['dragenter','dragover'].forEach(e=>drop.addEventListener(e,ev=>{ev.preventDefault();drop.classList.add('drag')}));
+['dragleave','drop'].forEach(e=>drop.addEventListener(e,ev=>{ev.preventDefault();drop.classList.remove('drag')}));
+drop.addEventListener('drop',e=>{const f=e.dataTransfer.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{inEl.value=r.result;setStatus(true,'File loaded: '+f.name)};r.readAsText(f)});
+$('#loadFile').onclick=()=>$('#fileIn').click();
+$('#fileIn').onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{inEl.value=r.result;setStatus(true,'File loaded: '+f.name)};r.readAsText(f)};
+</script></body></html>

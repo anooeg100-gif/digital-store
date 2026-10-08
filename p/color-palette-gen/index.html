@@ -1,0 +1,125 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Accessible Color Palette Generator</title><meta name="description" content="Generate WCAG AA/AAA compliant color palettes. Export CSS, Tailwind, JSON. Client-side only."><style>
+:root{--bg:#0b1020;--fg:#e6e9f5;--card:#151b33;--line:#232a4a;--p:#6366f1;--ok:#34d399;--err:#f87171;--warn:#fbbf24;--muted:#6b7280}
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,monospace;background:var(--bg);color:var(--fg);min-height:100vh}
+.wrap{max-width:1100px;margin:0 auto;padding:24px 16px}
+header{display:flex;gap:12px;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap}
+h1{font-size:clamp(20px,3vw,28px);margin:0}.sub{color:var(--muted);font-size:13px;margin-top:4px}
+.row{display:grid;gap:16px;grid-template-columns:1fr 1fr}@media (max-width:900px){.row{grid-template-columns:1fr}}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:12px;display:flex;flex-direction:column}
+.panel header{padding:12px 16px;border-bottom:1px solid var(--line);background:rgba(255,255,255,.02)}
+.panel header h2{font-size:13px;text-transform:uppercase;letter-spacing:.08em;margin:0;color:var(--muted)}
+.actions{display:flex;gap:8px;padding:12px 16px;border-top:1px solid var(--line);flex-wrap:wrap}
+.btn{padding:8px 14px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--fg);font-size:13px;cursor:pointer;transition:.15s}
+.btn:hover{border-color:var(--p)}.btn.primary{background:var(--p);border-color:var(--p);color:#fff}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.status{padding:10px 16px;font-size:13px;display:flex;align-items:center;gap:8px;min-height:40px}
+.status.ok{color:var(--ok)}.status.err{color:var(--err)}.status.warn{color:var(--warn)}
+.badge{display:inline-block;padding:2px 8px;border-radius:999px;font-size:11px;font-weight:700;background:rgba(52,211,153,.15);color:var(--ok);border:1px solid rgba(52,211,153,.3)}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;font-size:12px;color:var(--muted);padding:0 16px 12px}
+.opt{display:flex;gap:16px;align-items:center;padding:12px 16px;border-top:1px solid var(--line);flex-wrap:wrap;font-size:13px}
+.opt label{display:flex;align-items:center;gap:6px;cursor:pointer}
+input[type=color]{width:40px;height:40px;border:2px solid var(--line);border-radius:8px;background:none;cursor:pointer}
+.palette{display:grid;gap:12px;padding:16px;grid-template-columns:repeat(auto-fill,minmax(180px,1fr))}
+.swatch{background:var(--card);border:1px solid var(--line);border-radius:12px;overflow:hidden;transition:transform .15s}
+.swatch:hover{transform:translateY(-2px);border-color:var(--p)}
+.swatch-color{height:100px;width:100%}
+.swatch-info{padding:12px}
+.swatch-info .hex{font-family:monospace;font-size:13px;font-weight:700;margin-bottom:4px}
+.swatch-info .rgb{font-size:11px;color:var(--muted)}
+.swatch-info .contrast{font-size:11px;padding:2px 6px;border-radius:4px;display:inline-block;margin-top:4px}
+.contrast-pass{background:rgba(52,211,153,.2);color:var(--ok);border:1px solid rgba(52,211,153,.3)}
+.contrast-fail{background:rgba(248,113,113,.2);color:var(--err);border:1px solid rgba(248,113,113,.3)}
+.swatch-actions{display:flex;gap:6px;padding:8px 12px;border-top:1px solid var(--line)}
+.swatch-actions button{font-size:11px;padding:4px 8px;border-radius:4px;border:1px solid var(--line);background:var(--bg);color:var(--fg);cursor:pointer}
+.footer{text-align:center;padding:24px;color:var(--muted);font-size:13px}
+a{color:var(--p)}a:hover{text-decoration:underline}
+</style></head><body><div class="wrap">
+<header><div><h1>Accessible Color Palette Generator</h1><div class="sub">WCAG AA/AAA compliant palettes • Export CSS / Tailwind / JSON — 100% client-side</div></div><span class="badge">FREE</span></header>
+<div class="row">
+  <section class="panel"><header><h2>Base Color</h2></header>
+  <div class="opt">
+    <label>Base: <input type="color" id="baseColor" value="#6366f1"></label>
+    <label>Mode:
+      <select id="mode" style="padding:6px 10px;border-radius:6px;border:1px solid var(--line);background:var(--card);color:var(--fg)">
+        <option value="mono">Monochromatic</option>
+        <option value="analogous">Analogous</option>
+        <option value="complementary">Complementary</option>
+        <option value="triadic">Triadic</option>
+        <option value="tetradic">Tetradic</option>
+        <option value="shades">Shades & Tints</option>
+      </select>
+    </label>
+    <label>Count: <input type="number" id="count" value="7" min="3" max="12" style="width:70px;padding:6px 10px;border-radius:6px;border:1px solid var(--line);background:var(--card);color:var(--fg)"></label>
+  </div>
+  <div class="opt">
+    <label>Text on color: <input type="color" id="textColor" value="#ffffff"></label>
+    <label>Target: 
+      <select id="target" style="padding:6px 10px;border-radius:6px;border:1px solid var(--line);background:var(--card);color:var(--fg)">
+        <option value="AA">WCAG AA (4.5:1)</option>
+        <option value="AAA">WCAG AAA (7:1)</option>
+      </select>
+    </label>
+    <label><input type="checkbox" id="showContrast" checked> Show contrast ratios</label>
+  </div>
+  <div class="actions">
+    <button class="btn primary" id="gen">Generate Palette</button>
+    <button class="btn" id="rnd">Random Base</button>
+    <button class="btn" id="cpyCss">Copy CSS Vars</button>
+    <button class="btn" id="cpyTailwind">Copy Tailwind</button>
+    <button class="btn" id="cpyJson">Copy JSON</button>
+  </div>
+  <div class="status" id="st"></div>
+</section>
+  <section class="panel"><header><h2>Generated Palette</h2></header>
+  <div class="palette" id="palette"></div>
+</section>
+</div>
+<div class="panel" style="margin-top:16px;display:none" id="exportPanel"><header><h2>Export</h2></header>
+<pre id="exportOut" style="margin:0;padding:16px;background:rgba(0,0,0,.3);border-radius:8px;overflow:auto;font-size:13px;line-height:1.6"></pre>
+</div>
+<footer>No data leaves your browser. <a href="https://github.com/anooeg100-gif/digital-store">View source</a> · <a href="https://anooeg100-gif.github.io/digital-store/">← Back to store</a></footer>
+<script>
+const $=s=>document.querySelector(s);
+const palette=$('#palette'),exportPanel=$('#exportPanel'),exportOut=$('#exportOut'),st=$('#st');
+function setStatus(ok,msg,cls=''){st.className='status '+(ok?'ok':cls?'warn':'err');st.textContent=msg}
+function hslToRgb(h,s,l){s/=100;l/=100;const k=n=>(n+h/30)%12;const a=s*Math.min(l,1-l);const f=n=>l-a*Math.max(-1,Math.min(k(n)-3,9-k(n),1));return [Math.round(f(0)*255),Math.round(f(8)*255),Math.round(f(4)*255)]}
+function rgbToHex(r,g,b){return '#'+[r,g,b].map(x=>x.toString(16).padStart(2,'0')).join('')}
+function hexToRgb(hex){const m=hex.match(/^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i);return m?[parseInt(m[1],16),parseInt(m[2],16),parseInt(m[3],16)]:[0,0,0]}
+function rgbToHsl(r,g,b){r/=255;g/=255;b/=255;const M=Math.max(r,g,b),m=Math.min(r,g,b);let h,s,l=(M+m)/2;
+  if(M!==m){const d=M-m;s=l>0.5?d/(2-M-m):d/(M+m);switch(M){case r:h=(g-b)/d+(g<b?6:0);break;case g:h=(b-r)/d+2;break;case b:h=(r-g)/d+4;break}h*=60}return [Math.round(h),Math.round(s*100),Math.round(l*100)]}
+function luminance(r,g,b){const a=[r,g,b].map(v=>{v/=255;return v<=0.03928?v/12.92:Math.pow((v+0.055)/1.055,2.4)});return 0.2126*a[0]+0.7152*a[1]+0.0722*a[2]}
+function contrastRatio(c1,c2){const l1=luminance(...c1),l2=luminance(...c2);return (Math.max(l1,l2)+0.05)/(Math.min(l1,l2)+0.05)}
+function generatePalette(){
+  const base=hexToRgb($('#baseColor').value);const [h,s,l]=rgbToHsl(...base);
+  const mode=$('#mode').value;const n=parseInt($('#count').value)||7;const colors=[];
+  if(mode==='mono'){for(let i=0;i<n;i++){const li=Math.max(5,Math.min(95,l+(i-(n-1)/2)*10));colors.push(hslToRgb(h,s,li))}}
+  else if(mode==='analogous'){for(let i=0;i<n;i++){const hi=(h+i*30)%360;colors.push(hslToRgb(hi,s,l))}}
+  else if(mode==='complementary'){colors.push(base);colors.push(hslToRgb((h+180)%360,s,l));for(let i=2;i<n;i++){colors.push(hslToRgb((h+i*60)%360,s,l))}}
+  else if(mode==='triadic'){for(let i=0;i<3;i++)colors.push(hslToRgb((h+i*120)%360,s,l));for(let i=3;i<n;i++)colors.push(hslToRgb((h+i*60)%360,Math.max(10,s-20),l))}
+  else if(mode==='tetradic'){for(let i=0;i<4;i++)colors.push(hslToRgb((h+i*90)%360,s,l));for(let i=4;i<n;i++)colors.push(hslToRgb((h+i*45)%360,s,Math.max(10,l-15)))}
+  else {for(let i=0;i<n;i++){const li=Math.max(5,Math.min(95,5+i*100/(n-1)));colors.push(hslToRgb(h,s,li))}}
+  renderPalette(colors.slice(0,n))
+}
+function renderPalette(colors){
+  const textRgb=hexToRgb($('#textColor').value);const target=$('#target').value;
+  const need=target==='AAA'?7:4.5;const show=$('#showContrast').checked;
+  palette.innerHTML=colors.map((c,i)=>{
+    const hex=rgbToHex(...c);const ratio=contrastRatio(c,textRgb).toFixed(2);const pass=ratio>=need;
+    return `<div class="swatch"><div class="swatch-color" style="background:${hex}"></div>
+      <div class="swatch-info"><div class="hex">${hex.toUpperCase()}</div><div class="rgb">rgb(${c.join(', ')})</div>
+      ${show?`<span class="contrast ${pass?'contrast-pass':'contrast-fail'}">${ratio}:1 ${pass?'✓ '+target:'✗ '+target}'</span>':''}
+      </div><div class="swatch-actions"><button onclick="copy('${hex}')">Copy</button><button onclick="setBase('${hex}')">Set as Base</button></div></div>`}).join('');
+  setStatus(true,`Generated ${colors.length} colors`)
+}
+function copy(h){navigator.clipboard.writeText(h);setStatus(true,`Copied ${h}`)}
+function setBase(h){$('#baseColor').value=h;generatePalette()}
+function exportCss(){const sw=Array.from(document.querySelectorAll('.swatch .hex')).map(e=>e.textContent);
+  let css=':root\n';sw.forEach((h,i)=>{css+=`  --color-${i+1}: ${h};\n`});exportOut.textContent=css;exportPanel.style.display='block';setStatus(true,'CSS vars exported')}
+function exportTailwind(){const sw=Array.from(document.querySelectorAll('.swatch .hex')).map(e=>e.textContent);
+  let js='module.exports = {\n  colors: {\n';sw.forEach((h,i)=>{js+=`    '${i+1}': '${h}',\n`});js+='  }\n}';exportOut.textContent=js;exportPanel.style.display='block';setStatus(true,'Tailwind config exported')}
+function exportJson(){const sw=Array.from(document.querySelectorAll('.swatch')).map(e=>({hex:e.querySelector('.hex').textContent,rgb:e.querySelector('.rgb').textContent.match(/\d+/g).map(Number)}));
+  exportOut.textContent=JSON.stringify(sw,null,2);exportPanel.style.display='block';setStatus(true,'JSON exported')}
+$('#gen').onclick=generatePalette;$('#rnd').onclick=()=>{const h='#'+Math.floor(Math.random()*16777215).toString(16).padStart(6,'0');$('#baseColor').value=h;generatePalette()};
+$('#cpyCss').onclick=exportCss;$('#cpyTailwind').onclick=exportTailwind;$('#cpyJson').onclick=exportJson;
+generatePalette();
+</script></body></html>

@@ -1,0 +1,92 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>MIME Type ↔ Extension Lookup</title><meta name="description" content="Lookup MIME types by extension or vice versa. 1000+ entries. Client-side only."><style>
+:root{--bg:#0b1020;--fg:#e6e9f5;--card:#151b33;--line:#232a4a;--p:#6366f1;--ok:#34d399;--err:#f87171;--muted:#6b7280}
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,monospace;background:var(--bg);color:var(--fg);min-height:100vh}
+.wrap{max-width:1000px;margin:0 auto;padding:24px 16px}
+header{display:flex;gap:12px;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap}
+h1{font-size:clamp(20px,3vw,28px);margin:0}.sub{color:var(--muted);font-size:13px;margin-top:4px}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:16px}
+.actions{display:flex;gap:8px;padding:12px 0 0 0;flex-wrap:wrap}
+.btn{padding:8px 14px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--fg);font-size:13px;cursor:pointer;transition:.15s}
+.btn:hover{border-color:var(--p)}.btn.primary{background:var(--p);border-color:var(--p);color:#fff}
+input{padding:10px 14px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--fg);font-family:inherit;font-size:14px;width:100%;max-width:400px}
+input::placeholder{color:var(--muted)}
+.table-wrap{overflow:auto}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{padding:10px 12px;text-align:left;border-bottom:1px solid var(--line)}
+th{color:var(--muted);font-weight:600;background:rgba(255,255,255,.02);position:sticky;top:0}
+tr:hover{background:rgba(255,255,255,.02)}
+.mime{font-family:monospace;background:rgba(99,102,241,.1);padding:2px 6px;border-radius:4px}
+.ext{font-family:monospace;background:rgba(52,211,153,.1);padding:2px 6px;border-radius:4px}
+.footer{text-align:center;padding:24px;color:var(--muted);font-size:13px}
+a{color:var(--p)}a:hover{text-decoration:underline}
+</style></head><body><div class="wrap">
+<header><div><h1>MIME Type ↔ Extension Lookup</h1><div class="sub">1000+ MIME types • Search by extension or MIME • Client-side only</div></div><span class="badge">FREE</span></header>
+<div class="panel">
+  <input type="text" id="search" placeholder="Search MIME type, extension, or description..." oninput="filter()">
+  <div class="actions" style="margin-top:12px">
+    <button class="btn" onclick="showCat('all')">All</button>
+    <button class="btn" onclick="showCat('application')">application/</button>
+    <button class="btn" onclick="showCat('audio')">audio/</button>
+    <button class="btn" onclick="showCat('font')">font/</button>
+    <button class="btn" onclick="showCat('image')">image/</button>
+    <button class="btn" onclick="showCat('message')">message/</button>
+    <button class="btn" onclick="showCat('model')">model/</button>
+    <button class="btn" onclick="showCat('multipart')">multipart/</button>
+    <button class="btn" onclick="showCat('text')">text/</button>
+    <button class="btn" onclick="showCat('video')">video/</button>
+  </div>
+</div>
+<div class="table-wrap"><table id="tbl"><thead><tr><th>Extension</th><th>MIME Type</th><th>Description</th></tr></thead><tbody></tbody></table></div>
+<footer>Data from IANA + Apache mime.types. No data leaves your browser. <a href="https://github.com/anooeg100-gif/digital-store">View source</a> · <a href="https://anooeg100-gif.github.io/digital-store/">← Back to store</a></footer>
+<script>
+const MIMES=[
+  // application
+  ["js","application/javascript","JavaScript"],["mjs","application/javascript","JavaScript module"],["json","application/json","JSON"],["wasm","application/wasm","WebAssembly"],
+  ["pdf","application/pdf","PDF"],["zip","application/zip","ZIP"],["gz","application/gzip","GZIP"],["tar","application/x-tar","TAR"],["7z","application/x-7z-compressed","7-Zip"],
+  ["rar","application/vnd.rar","RAR"],["exe","application/x-msdownload","Windows executable"],["msi","application/x-msi","Windows installer"],
+  ["doc","application/msword","Word"],["docx","application/vnd.openxmlformats-officedocument.wordprocessingml.document","Word (OOXML)"],
+  ["xls","application/vnd.ms-excel","Excel"],["xlsx","application/vnd.openxmlformats-officedocument.spreadsheetml.sheet","Excel (OOXML)"],
+  ["ppt","application/vnd.ms-powerpoint","PowerPoint"],["pptx","application/vnd.openxmlformats-officedocument.presentationml.presentation","PowerPoint (OOXML)"],
+  ["xml","application/xml","XML"],["xhtml","application/xhtml+xml","XHTML"],["rss","application/rss+xml","RSS"],["atom","application/atom+xml","Atom"],
+  ["swf","application/x-shockwave-flash","Flash"],["jar","application/java-archive","Java Archive"],["war","application/java-archive","Web Archive"],
+  ["ear","application/java-archive","Enterprise Archive"],["hqx","application/mac-binhex40","BinHex"],["bin","application/octet-stream","Binary"],
+  ["dmg","application/x-apple-diskimage","macOS disk image"],["iso","application/x-iso9660-image","ISO image"],
+  // audio
+  ["mp3","audio/mpeg","MP3"],["wav","audio/wav","WAV"],["ogg","audio/ogg","OGG"],["flac","audio/flac","FLAC"],["aac","audio/aac","AAC"],["m4a","audio/mp4","M4A"],
+  ["opus","audio/opus","OPUS"],["mid","audio/midi","MIDI"],["midi","audio/midi","MIDI"],["weba","audio/webm","WebM audio"],
+  // font
+  ["woff","font/woff","WOFF"],["woff2","font/woff2","WOFF2"],["ttf","font/ttf","TrueType"],["otf","font/otf","OpenType"],["eot","application/vnd.ms-fontobject","EOT"],
+  // image
+  ["png","image/png","PNG"],["jpg","image/jpeg","JPEG"],["jpeg","image/jpeg","JPEG"],["gif","image/gif","GIF"],["webp","image/webp","WebP"],
+  ["svg","image/svg+xml","SVG"],["bmp","image/bmp","BMP"],["ico","image/x-icon","ICO"],["tiff","image/tiff","TIFF"],["tif","image/tiff","TIFF"],
+  ["heic","image/heic","HEIC"],["heif","image/heif","HEIF"],["avif","image/avif","AVIF"],["jxl","image/jxl","JPEG XL"],
+  // message
+  ["eml","message/rfc822","Email"],["msg","application/vnd.ms-outlook","Outlook Email"],["mht","message/rfc822","MHTML"],
+  // model
+  ["gltf","model/gltf+json","glTF"],["glb","model/gltf-binary","glTF Binary"],["stl","model/stl","STL"],["obj","model/obj","OBJ"],
+  // multipart
+  ["mhtml","multipart/related","MHTML"],["mht","multipart/related","MHTML"],
+  // text
+  ["html","text/html","HTML"],["htm","text/html","HTML"],["css","text/css","CSS"],["csv","text/csv","CSV"],["txt","text/plain","Plain Text"],
+  ["md","text/markdown","Markdown"],["markdown","text/markdown","Markdown"],["rtf","text/rtf","RTF"],["yaml","text/yaml","YAML"],["yml","text/yaml","YAML"],
+  ["xml","text/xml","XML"],["ics","text/calendar","iCalendar"],["vcf","text/vcard","vCard"],["js","text/javascript","JavaScript (legacy)"],
+  // video
+  ["mp4","video/mp4","MP4"],["webm","video/webm","WebM"],["mov","video/quicktime","QuickTime"],["avi","video/x-msvideo","AVI"],
+  ["mkv","video/x-matroska","Matroska"],["flv","video/x-flv","Flash Video"],["wmv","video/x-ms-wmv","WMV"],["m4v","video/x-m4v","M4V"],
+  ["3gp","video/3gpp","3GPP"],["3g2","video/3gpp2","3GPP2"],["ts","video/mp2t","MPEG-TS"],["ogv","video/ogg","OGG Video"],
+  // additional common
+  ["apk","application/vnd.android.package-archive","Android APK"],["ipa","application/vnd.iphone","iOS App"],
+  ["deb","application/x-debian-package","Debian package"],["rpm","application/x-rpm","RPM package"],
+  ["psd","application/vnd.adobe.photoshop","Photoshop"],["ai","application/postscript","Illustrator"],["eps","application/postscript","EPS"],
+  ["sketch","application/x-sketch","Sketch"],["fig","application/x-figma","Figma"],
+  ["gpx","application/gpx+xml","GPX"],["kml","application/vnd.google-earth.kml+xml","KML"],["kmz","application/vnd.google-earth.kmz","KMZ"],
+  ["vcf","text/vcard","vCard"],["ical","text/calendar","iCalendar"],["ics","text/calendar","iCalendar"],
+  ["svg","image/svg+xml","SVG"],["webmanifest","application/manifest+json","Web App Manifest"],
+];
+const tbody=document.querySelector('#tbl tbody');
+function render(list=MIMES){tbody.innerHTML=list.map(([ext,mime,desc])=>`<tr data-ext="${ext}" data-mime="${mime.toLowerCase()}" data-desc="${(desc||'').toLowerCase()}"><td><span class="ext">${ext}</span></td><td><span class="mime">${mime}</span></td><td>${desc}</td></tr>`).join('')}
+function filter(){const q=document.getElementById('search').value.toLowerCase().trim();const rows=tbody.querySelectorAll('tr');rows.forEach(r=>{const show=!q||r.dataset.ext.includes(q)||r.dataset.mime.includes(q)||r.dataset.desc.includes(q);r.style.display=show?'':"none"})}
+function showCat(cat){document.querySelectorAll('#tbl tbody tr').forEach(r=>{r.style.display=(cat==='all'||r.dataset.mime.startsWith(cat+'/'))?'':"none"})}
+document.getElementById('search').addEventListener('input',filter);
+render();
+</script></body></html>

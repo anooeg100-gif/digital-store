@@ -1,0 +1,130 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Cron Expression Builder</title><meta name="description" content="Build, test, and understand cron expressions. Calculate next run times. Client-side only."><style>
+:root{--bg:#0b1020;--fg:#e6e9f5;--card:#151b33;--line:#232a4a;--p:#6366f1;--ok:#34d399;--err:#f87171;--warn:#fbbf24;--muted:#6b7280}
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,monospace;background:var(--bg);color:var(--fg);min-height:100vh}
+.wrap{max-width:1000px;margin:0 auto;padding:24px 16px}
+header{display:flex;gap:12px;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap}
+h1{font-size:clamp(20px,3vw,28px);margin:0}.sub{color:var(--muted);font-size:13px;margin-top:4px}
+.row{display:grid;gap:16px;grid-template-columns:1fr 1fr}@media (max-width:900px){.row{grid-template-columns:1fr}}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:12px;display:flex;flex-direction:column}
+.panel header{padding:12px 16px;border-bottom:1px solid var(--line);background:rgba(255,255,255,.02)}
+.panel header h2{font-size:13px;text-transform:uppercase;letter-spacing:.08em;margin:0;color:var(--muted)}
+.actions{display:flex;gap:8px;padding:12px 16px;border-top:1px solid var(--line);flex-wrap:wrap}
+.btn{padding:8px 14px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--fg);font-size:13px;cursor:pointer;transition:.15s}
+.btn:hover{border-color:var(--p)}.btn.primary{background:var(--p);border-color:var(--p);color:#fff}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.status{padding:10px 16px;font-size:13px;display:flex;align-items:center;gap:8px;min-height:40px}
+.status.ok{color:var(--ok)}.status.err{color:var(--err)}.status.warn{color:var(--warn)}
+.badge{display:inline-block;padding:2px 8px;border-radius:999px;font-size:11px;font-weight:700;background:rgba(52,211,153,.15);color:var(--ok);border:1px solid rgba(52,211,153,.3)}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;font-size:12px;color:var(--muted);padding:0 16px 12px}
+.opt{display:flex;gap:16px;align-items:center;padding:12px 16px;border-top:1px solid var(--line);flex-wrap:wrap;font-size:13px}
+.opt label{display:flex;align-items:center;gap:6px;cursor:pointer}
+input,select{padding:8px 12px;border-radius:6px;border:1px solid var(--line);background:var(--card);color:var(--fg);font-family:inherit;font-size:13px}
+.presets{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px;padding:12px 16px;border-top:1px solid var(--line)}
+.presets button{padding:10px 12px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--fg);font-size:12px;cursor:pointer;text-align:left;transition:.15s}
+.presets button:hover{border-color:var(--p);background:rgba(99,102,241,.1)}
+.next-runs{padding:16px;max-height:400px;overflow:auto}
+.next-run{display:flex;gap:12px;padding:8px 0;border-bottom:1px solid var(--line);font-size:13px}
+.next-run .time{font-weight:700;color:var(--p);min-width:160px}
+.next-run .desc{color:var(--muted);font-size:11px}
+.footer{text-align:center;padding:24px;color:var(--muted);font-size:13px}
+a{color:var(--p)}a:hover{text-decoration:underline}
+</style></head><body><div class="wrap">
+<header><div><h1>Cron Expression Builder</h1><div class="sub">Build • Test • Next run times — 100% client-side</div></div><span class="badge">FREE</span></header>
+<div class="row">
+  <section class="panel"><header><h2>Build Expression</h2></header>
+  <div class="opt">
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <select id="min"><option value="*">Every minute</option></select>
+      <select id="hr"><option value="*">Every hour</option></select>
+      <select id="dom"><option value="*">Every day</option></select>
+      <select id="mon"><option value="*">Every month</option></select>
+      <select id="dow"><option value="*">Every day</option></select>
+    </div>
+  </div>
+  <input type="text" id="cron" placeholder="* * * * *" style="width:100%;padding:12px 16px;font-family:monospace;font-size:16px;border:none;background:rgba(255,255,255,.03);border-radius:8px;border:1px solid var(--line);color:var(--fg)">
+  <div class="presets" id="presets"></div>
+  <div class="actions">
+    <button class="btn primary" id="parse">Parse & Explain</button>
+    <button class="btn" id="next">Show Next 10 Runs</button>
+    <button class="btn" id="cpy">Copy</button>
+    <button class="btn" id="clr">Clear</button>
+  </div>
+  <div class="status" id="st"></div>
+</section>
+  <section class="panel"><header><h2>Explanation</h2></header>
+  <div id="explanation"></div>
+  <div class="kv"><span>Valid:</span><span id="valid">—</span><span>Next run:</span><span id="nextRun">—</span></div>
+</section>
+</div>
+<div class="panel" style="margin-top:16px"><header><h2>Next 10 Run Times</h2></header>
+<div class="next-runs" id="nextRuns"></div>
+</div>
+<footer>No data leaves your browser. <a href="https://github.com/anooeg100-gif/digital-store">View source</a> · <a href="https://anooeg100-gif.github.io/digital-store/">← Back to store</a></footer>
+<script>
+const $=s=>document.querySelector(s);
+const cron=$('#cron'),st=$('#st'),explanation=$('#explanation'),valid=$('#valid'),nextRun=$('#nextRun'),nextRuns=$('#nextRuns');
+const fields=['min','hr','dom','mon','dow'];
+const ranges={min:[0,59],hr:[0,23],dom:[1,31],mon:[1,12],dow:[0,7]};
+const names=['Minute','Hour','Day of Month','Month','Day of Week'];
+function initSelects(){
+  fields.forEach((f,i)=>{const sel=$('#'+f);const [min,max]=ranges[f];
+    for(let v=min;v<=max;v++){const o=document.createElement('option');o.value=v;o.textContent=v===min&&v===max?'*':v+(i===4&&v===7?' (Sun)':i===3?['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][v-1]:'');sel.appendChild(o)}
+    sel.value='*';sel.onchange=syncFromSelects})
+}
+function syncFromSelects(){
+  cron.value=fields.map(f=>$('#'+f).value).join(' ');
+  parseCron()
+}
+function syncToSelects(val){
+  const parts=val.trim().split(/\s+/);if(parts.length!==5)return;
+  parts.forEach((p,i)=>{const sel=$('#'+fields[i]);if([...sel.options].some(o=>o.value===p))sel.value=p;else sel.value='*'})}
+const presetsData=[
+  {label:'Every minute',val:'* * * * *'},{label:'Every hour',val:'0 * * * *'},{label:'Daily at midnight',val:'0 0 * * *'},
+  {label:'Daily at 6:30 AM',val:'30 6 * * *'},{label:'Weekly on Sunday',val:'0 0 * * 0'},{label:'Monthly on 1st',val:'0 0 1 * *'},
+  {label:'Weekdays at 9 AM',val:'0 9 * * 1-5'},{label:'Every 15 minutes',val:'*/15 * * * *'},{label:'Every 5 minutes',val:'*/5 * * * *'},
+  {label:'Hourly at :30',val:'30 * * * *'},{label:'Twice daily (6 & 18)',val:'0 6,18 * * *'},{label:'First Monday',val:'0 0 * * 1#1'}];
+function renderPresets(){$('#presets').innerHTML=presetsData.map(p=>`<button onclick="setCron('${p.val}')">${p.label}<br><span style="color:var(--muted);font-size:10px">${p.val}</span></button>`).join('')}
+window.setCron=v=>{cron.value=v;syncToSelects(v);parseCron()};
+function parseCron(){
+  const val=cron.value.trim();const parts=val.split(/\s+/);
+  if(parts.length!==5){setStatus(false,'Invalid: need 5 fields');valid.textContent='✗';return}
+  try{new cronParser(val);setStatus(true,'Valid cron expression');valid.textContent='✓'}catch(e){setStatus(false,e.message);valid.textContent='✗';return}
+  const labels=['Minute','Hour','Day of Month','Month','Day of Week'];
+  let html='<table style="width:100%;font-size:13px">';
+  parts.forEach((p,i)=>{html+=`<tr><td style="color:var(--muted);padding:4px">${labels[i]}</td><td style="padding:4px">${explainField(p,ranges[fields[i]],fields[i])}</td></tr>`});
+  html+='</table>';explanation.innerHTML=html;
+  const next=cronParser(val).next();nextRun.textContent=next?next.toLocaleString():'—';
+  showNextRuns(val)
+}
+function explainField(val,range,field){
+  if(val==='*')return 'Every '+field;
+  if(val.includes('/')){const [base,step]=val.split('/');return `Every ${step} ${field}${base!=='*'?' starting at '+base:''}`}
+  if(val.includes('-'))return `Range ${val} ${field}`;
+  if(val.includes(','))return `Specific: ${val} ${field}`;
+  if(field==='mon'){const m=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];return m[parseInt(val)-1]||val}
+  if(field==='dow'){const d=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];return d[parseInt(val)]||val}
+  return val
+}
+function showNextRuns(val){
+  try{const parser=new cronParser(val);let html='';for(let i=0;i<10;i++){const n=parser.next();if(!n)break;
+    const now=new Date();const diff=n-now;const mins=Math.round(diff/60000);
+    let rel='';if(mins<1)rel='now';else if(mins<60)rel=`in ${mins} min`;else if(mins<1440)rel=`in ${Math.round(mins/60)}h ${mins%60}m`;else rel=`in ${Math.round(mins/1440)}d`;
+    html+=`<div class="next-run"><span class="time">${n.toLocaleString()}</span><span class="desc">(${rel})</span></div>`}
+  nextRuns.innerHTML=html}catch(e){nextRuns.innerHTML='<span style="color:var(--err)">Error calculating</span>'}}
+class cronParser{constructor(expr){this.expr=expr.trim();this.parts=this.expr.split(/\s+/);if(this.parts.length!==5)throw new Error('5 fields required');
+  this.ranges=[[0,59],[0,23],[1,31],[1,12],[0,6]];this.compile()}
+  compile(){this.sets=this.parts.map((p,i)=>this.parseField(p,this.ranges[i]))}
+  parseField(val,range){if(val==='*')return{type:'all',min:range[0],max:range[1]};
+    if(val.includes('/')){const [base,step]=val.split('/');const b=base==='*'?range[0]:parseInt(base);return{type:'step',start:b,step:parseInt(step),min:range[0],max:range[1]}};
+    if(val.includes('-')||val.includes(',')){const vals=val.split(',').flatMap(v=>v.includes('-')?(function(a,b){const r=[];for(let i=parseInt(a);i<=parseInt(b);i++)r.push(i);return r})(v.split('-')[0],v.split('-')[1]):[parseInt(v)]);return{type:'list',values:vals}};
+    return{type:'single',value:parseInt(val)}}
+  matches(date,fieldIdx){const val=[date.getMinutes(),date.getHours(),date.getDate(),date.getMonth()+1,date.getDay()][fieldIdx];const s=this.sets[fieldIdx];
+    if(s.type==='all')return true;if(s.type==='single')return val===s.value;if(s.type==='step')return val>=s.start&&(val-s.start)%s.step===0;if(s.type==='list')return s.values.includes(val);return false}
+  next(){let d=new Date();d.setSeconds(0);d.setMilliseconds(0);d=new Date(d.getTime()+60000);
+    for(let i=0;i<100000;i++){if(this.sets.every((s,idx)=>this.matches(d,idx)))return d;d=new Date(d.getTime()+60000)}return null}}
+function setStatus(ok,msg){st.className='status '+(ok?'ok':'err');st.textContent=msg}
+$('#parse').onclick=parseCron;$('#next').onclick=()=>{parseCron();nextRuns.scrollIntoView({behavior:'smooth'})};
+$('#cpy').onclick=async()=>{await navigator.clipboard.writeText(cron.value);setStatus(true,'Copied')};
+$('#clr').onclick=()=>{cron.value='* * * * *';fields.forEach(f=>$('#'+f).value='*');explanation.innerHTML='';valid.textContent='—';nextRun.textContent='—';nextRuns.innerHTML='';setStatus(true,'Cleared')};
+initSelects();renderPresets();parseCron();
+</script></body></html>

@@ -1,0 +1,87 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>UUID / ULID / NanoID Generator</title><meta name="description" content="Generate UUID v1/v4/v7, ULID, NanoID in batch. Copy or download. Client-side only."><style>
+:root{--bg:#0b1020;--fg:#e6e9f5;--card:#151b33;--line:#232a4a;--p:#6366f1;--ok:#34d399;--err:#f87171;--muted:#6b7280}
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,monospace;background:var(--bg);color:var(--fg);min-height:100vh}
+.wrap{max-width:1000px;margin:0 auto;padding:24px 16px}
+header{display:flex;gap:12px;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap}
+h1{font-size:clamp(20px,3vw,28px);margin:0}.sub{color:var(--muted);font-size:13px;margin-top:4px}
+.row{display:grid;gap:16px;grid-template-columns:1fr 1fr}@media (max-width:900px){.row{grid-template-columns:1fr}}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:12px;display:flex;flex-direction:column}
+.panel header{padding:12px 16px;border-bottom:1px solid var(--line);background:rgba(255,255,255,.02)}
+.panel header h2{font-size:13px;text-transform:uppercase;letter-spacing:.08em;margin:0;color:var(--muted)}
+.actions{display:flex;gap:8px;padding:12px 16px;border-top:1px solid var(--line);flex-wrap:wrap}
+.btn{padding:8px 14px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--fg);font-size:13px;cursor:pointer;transition:.15s}
+.btn:hover{border-color:var(--p)}.btn.primary{background:var(--p);border-color:var(--p);color:#fff}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.status{padding:10px 16px;font-size:13px;display:flex;align-items:center;gap:8px;min-height:40px}
+.status.ok{color:var(--ok)}.status.err{color:var(--err)}
+.badge{display:inline-block;padding:2px 8px;border-radius:999px;font-size:11px;font-weight:700;background:rgba(52,211,153,.15);color:var(--ok);border:1px solid rgba(52,211,153,.3)}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;font-size:12px;color:var(--muted);padding:0 16px 12px}
+.opt{display:flex;gap:16px;align-items:center;padding:12px 16px;border-top:1px solid var(--line);flex-wrap:wrap;font-size:13px}
+.opt label{display:flex;align-items:center;gap:6px;cursor:pointer}
+input,select{padding:8px 12px;border-radius:6px;border:1px solid var(--line);background:var(--card);color:var(--fg);font-family:inherit;font-size:13px}
+.ids{padding:16px;max-height:500px;overflow:auto;font-family:monospace;font-size:13px;line-height:1.8}
+.ids .id{padding:4px 8px;border-radius:4px;transition:.1s;cursor:pointer}
+.ids .id:hover{background:rgba(99,102,241,.15)}
+.footer{text-align:center;padding:24px;color:var(--muted);font-size:13px}
+a{color:var(--p)}a:hover{text-decoration:underline}
+</style></head><body><div class="wrap">
+<header><div><h1>UUID / ULID / NanoID Generator</h1><div class="sub">UUID v1/v4/v7 • ULID • NanoID • Batch generate — 100% client-side</div></div><span class="badge">FREE</span></header>
+<div class="row">
+  <section class="panel"><header><h2>Options</h2></header>
+  <div class="opt">
+    <label>Type:
+      <select id="type" style="padding:6px 10px;border-radius:6px;border:1px solid var(--line);background:var(--card);color:var(--fg)">
+        <option value="uuidv4">UUID v4 (random)</option>
+        <option value="uuidv1">UUID v1 (timestamp + MAC)</option>
+        <option value="uuidv7">UUID v7 (timestamp + random)</option>
+        <option value="ulid">ULID (sortable, 26 chars)</option>
+        <option value="nanoid">NanoID (URL-safe, 21 chars)</option>
+        <option value="nanoid-custom">NanoID (custom alphabet/length)</option>
+      </select>
+    </label>
+    <label>Count: <input type="number" id="count" value="20" min="1" max="10000" style="width:90px;padding:6px 10px;border-radius:6px;border:1px solid var(--line);background:var(--card);color:var(--fg)"></label>
+    <label id="nanoidOpts" style="display:none">Alphabet: <input type="text" id="alphabet" value="0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz_-" style="width:300px;padding:6px 10px;border-radius:6px;border:1px solid var(--line);background:var(--card);color:var(--fg)"> Length: <input type="number" id="len" value="21" min="1" max="100" style="width:70px;padding:6px 10px;border-radius:6px;border:1px solid var(--line);background:var(--card);color:var(--fg)"></label>
+  </div>
+  <div class="actions">
+    <button class="btn primary" id="gen">Generate</button>
+    <button class="btn" id="cpy">Copy All</button>
+    <button class="btn" id="dwn">Download .txt</button>
+    <button class="btn" id="clr">Clear</button>
+  </div>
+  <div class="status" id="st"></div>
+</section>
+  <section class="panel"><header><h2>Generated IDs</h2></header>
+  <div class="ids" id="ids"></div>
+</section>
+</div>
+<footer>No data leaves your browser. <a href="https://github.com/anooeg100-gif/digital-store">View source</a> · <a href="https://anooeg100-gif.github.io/digital-store/">← Back to store</a></footer>
+<script>
+const $=s=>document.querySelector(s);
+const ids=$('#ids'),st=$('#st'),type=$('#type'),count=$('#count'),alphabet=$('#alphabet'),len=$('#len'),nanoidOpts=$('#nanoidOpts');
+function setStatus(ok,msg){st.className='status '+(ok?'ok':'err');st.textContent=msg}
+type.onchange=()=>{nanoidOpts.style.display=type.value==='nanoid-custom'?'flex':'none'};
+function uuidv4(){return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,c=>{const r=Math.random()*16|0;return (c==='x'?r:r&0x3|0x8).toString(16)})}
+function uuidv1(){const buf=new Uint8Array(16);const now=Date.now();const t=now*10000+122192928000000000;
+  for(let i=7;i>=0;i--){buf[i]=t&0xff;t>>=8}buf[6]=(buf[6]&0x0f)|0x10;buf[8]=(buf[8]&0x3f)|0x80;crypto.getRandomValues(buf.subarray(9));
+  return Array.from(buf).map((b,i)=>(i===4||i===6||i===8||i===10?'-':'')+b.toString(16).padStart(2,'0')).join('')}
+function uuidv7(){const ms=Date.now();const buf=new Uint8Array(16);
+  buf[0]=ms>>24&0xff;buf[1]=ms>>16&0xff;buf[2]=ms>>8&0xff;buf[3]=ms&0xff;crypto.getRandomValues(buf.subarray(4));
+  buf[6]=(buf[6]&0x0f)|0x70;buf[8]=(buf[8]&0x3f)|0x80;
+  return Array.from(buf).map((b,i)=>(i===4||i===6||i===8||i===10?'-':'')+b.toString(16).padStart(2,'0')).join('')}
+function ulid(){const t=Date.now();const time=t.toString(36).padStart(10,'0');const rand=crypto.getRandomValues(new Uint8Array(10));const r=Array.from(rand).map(b=>b.toString(36).padStart(2,'0')).join('').substring(0,16);return time+r}
+function nanoid(alphabet,len){const bytes=crypto.getRandomValues(new Uint8Array(len));return Array.from(bytes).map(b=>alphabet[b%alphabet.length]).join('')}
+function generate(){
+  const n=parseInt(count.value)||1;const t=type.value;const out=[];
+  for(let i=0;i<n;i++){
+    let id='';if(t==='uuidv4')id=uuidv4();else if(t==='uuidv1')id=uuidv1();else if(t==='uuidv7')id=uuidv7();else if(t==='ulid')id=ulid();else if(t==='nanoid')id=nanoid('0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz_-',21);else if(t==='nanoid-custom')id=nanoid(alphabet.value,len.value);
+    out.push(id)}
+  ids.innerHTML=out.map(x=>`<div class="id" onclick="copy(this)">${x}</div>`).join('');
+  setStatus(true,`Generated ${n} ${t.toUpperCase()}${t==='nanoid-custom'?' (custom)':''}`)
+}
+function copy(el){navigator.clipboard.writeText(el.textContent);setStatus(true,`Copied: ${el.textContent.slice(0,30)}...`)}
+$('#gen').onclick=generate;
+$('#cpy').onclick=()=>{navigator.clipboard.writeText(Array.from(ids.querySelectorAll('.id')).map(e=>e.textContent).join('\n'));setStatus(true,'All copied')};
+$('#dwn').onclick=()=>{const txt=Array.from(ids.querySelectorAll('.id')).map(e=>e.textContent).join('\n');const b=new Blob([txt],{type:'text/plain'});const u=URL.createObjectURL(b);const a=document.createElement('a');a.href=u;a.download='ids.txt';a.click();URL.revokeObjectURL(u)};
+$('#clr').onclick=()=>{ids.innerHTML='';setStatus(true,'Cleared')};
+generate();
+</script></body></html>
