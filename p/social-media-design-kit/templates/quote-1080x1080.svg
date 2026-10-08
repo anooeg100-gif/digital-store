@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1080" viewBox="0 0 1080 1080" role="img" font-family='system-ui, -apple-system, "Segoe UI", Roboto, sans-serif'>
+  <title>Quote card — Great coffee isn't made, it's measured — 1080 by 1080</title>
+  <defs>
+    <linearGradient id="quote-rule" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#FF5C39"/>
+      <stop offset="1" stop-color="#1F7A6D"/>
+    </linearGradient>
+  </defs>
+  <rect x="0" y="0" width="1080" height="1080" fill="#F7F5F2"/>
+  <rect x="0" y="0" width="1080" height="24" fill="url(#quote-rule)"/>
+  <rect x="0" y="1056" width="1080" height="24" fill="url(#quote-rule)"/>
+  <circle cx="1020" cy="140" r="160" fill="#FF5C39" opacity="0.10"/>
+  <circle cx="60" cy="960" r="180" fill="#1F7A6D" opacity="0.08"/>
+  <text x="540" y="380" text-anchor="middle" font-size="240" font-weight="800" fill="#FF5C39">“</text>
+  <text x="540" y="470" text-anchor="middle" font-size="54" font-weight="700" fill="#101828">
+    <tspan x="540" dy="0">Great coffee isn't made.</tspan>
+    <tspan x="540" dy="72">It's measured — dose, time,</tspan>
+    <tspan x="540" dy="72">temperature — then repeated</tspan>
+    <tspan x="540" dy="72">every single morning.</tspan>
+  </text>
+  <rect x="490" y="740" width="100" height="8" rx="4" fill="#FF5C39"/>
+  <text x="540" y="820" text-anchor="middle" font-size="26" font-weight="700" letter-spacing="3" fill="#1F7A6D">MAYA ORTIZ · HEAD ROASTER</text>
+  <text x="540" y="862" text-anchor="middle" font-size="20" font-weight="600" letter-spacing="2" fill="#101828">HARBORLINE COFFEE ROASTERS</text>
+  <text x="540" y="970" text-anchor="middle" font-size="22" font-weight="600" fill="#101828" opacity="0.7">harborline.coffee · Spring Lot 04</text>
+</svg>

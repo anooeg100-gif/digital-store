@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720" role="img" font-family='system-ui, -apple-system, "Segoe UI", Roboto, sans-serif'>
+  <title>YouTube thumbnail — 5 Espresso Mistakes — 1280 by 720</title>
+  <defs>
+    <linearGradient id="thumb-grad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#1F7A6D"/>
+      <stop offset="1" stop-color="#FF5C39"/>
+    </linearGradient>
+  </defs>
+  <rect x="0" y="0" width="1280" height="720" fill="#101828"/>
+  <circle cx="1210" cy="80" r="240" fill="#1F7A6D" opacity="0.28"/>
+  <circle cx="60" cy="760" r="200" fill="url(#thumb-grad)" opacity="0.3"/>
+  <rect x="64" y="56" width="380" height="52" rx="26" fill="#FF5C39"/>
+  <text x="254" y="89" text-anchor="middle" font-size="18" font-weight="700" letter-spacing="2.5" fill="#101828">BREW GUIDE · EPISODE 12</text>
+  <text x="64" y="310" font-size="120" font-weight="800" fill="#F7F5F2">
+    <tspan x="64" dy="0">5 ESPRESSO</tspan>
+    <tspan x="64" dy="126" fill="#FF5C39">MISTAKES</tspan>
+  </text>
+  <rect x="64" y="478" width="180" height="12" rx="6" fill="#1F7A6D"/>
+  <text x="64" y="565" font-size="36" font-weight="600" fill="#F7F5F2">Fix a sour or bitter shot in 6 minutes.</text>
+  <circle cx="1080" cy="440" r="170" fill="#FF5C39"/>
+  <circle cx="1080" cy="440" r="188" fill="none" stroke="#F7F5F2" stroke-width="6" stroke-dasharray="14 18"/>
+  <text x="1080" y="440" text-anchor="middle" font-size="150" font-weight="800" fill="#101828">6</text>
+  <text x="1080" y="505" text-anchor="middle" font-size="26" font-weight="700" letter-spacing="4" fill="#101828">MINUTES</text>
+</svg>

@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Social Media Design Kit — Live Preview &amp; Recolor</title>
+<style>
+  :root{
+    --ink:#101828; --paper:#F7F5F2; --re-a:#FF5C39; --re-b:#1F7A6D;
+    --bg:#0B0F16; --panel:#141B26; --line:#263142; --muted:#93A1B5;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--paper);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;line-height:1.5}
+  header{padding:48px 24px 8px;max-width:1280px;margin:0 auto}
+  h1{margin:0 0 8px;font-size:34px;letter-spacing:-.5px}
+  header p{margin:0;color:var(--muted);max-width:70ch}
+  .wrap{max-width:1280px;margin:0 auto;padding:24px}
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:20px 24px;margin:24px 0}
+  .panel h2{margin:0 0 14px;font-size:13px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);font-weight:700}
+  .swatches{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px}
+  .swatch{display:flex;gap:12px;align-items:center}
+  .chip{width:44px;height:44px;border-radius:10px;border:1px solid rgba(255,255,255,.18);flex:none}
+  .swatch b{display:block;font-size:15px}
+  .swatch span{font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}
+  .controls{display:flex;flex-wrap:wrap;gap:28px;align-items:center}
+  .ctrl{display:flex;gap:12px;align-items:center;font-size:15px}
+  .ctrl input[type=color]{width:56px;height:40px;padding:0;border:1px solid var(--line);border-radius:8px;background:var(--panel);cursor:pointer}
+  .ctrl .hex{color:var(--muted);font-variant-numeric:tabular-nums;min-width:66px}
+  button{background:transparent;color:var(--paper);border:1px solid var(--line);border-radius:8px;padding:10px 16px;font:600 14px system-ui,sans-serif;cursor:pointer}
+  button:hover{border-color:var(--re-a);color:var(--re-a)}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:20px}
+  figure{margin:0;background:var(--panel);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+  .frame{background:#080B11;padding:14px;display:flex;align-items:center;justify-content:center;min-height:180px}
+  .frame svg{display:block;width:100%;height:auto}
+  figcaption{padding:12px 16px;font-size:13.5px;border-top:1px solid var(--line)}
+  figcaption b{font-weight:700}
+  figcaption span{color:var(--muted);display:block;margin-top:2px;font-variant-numeric:tabular-nums}
+  footer{max-width:1280px;margin:0 auto;padding:8px 24px 48px;color:var(--muted);font-size:13.5px}
+  /* Live recolor: the four kit hexes in the inlined SVGs map to the two user picks */
+  [fill="#FF5C39"]{fill:var(--re-a)}
+  [stroke="#FF5C39"]{stroke:var(--re-a)}
+  [stop-color="#FF5C39"]{stop-color:var(--re-a)}
+  [fill="#1F7A6D"]{fill:var(--re-b)}
+  [stroke="#1F7A6D"]{stroke:var(--re-b)}
+  [stop-color="#1F7A6D"]{stop-color:var(--re-b)}
+</style>
+</head>
+<body>
+<header>
+  <h1>Social Media Design Kit</h1>
+  <p>Six editable SVG templates for Harborline Coffee Roasters — same palette, same type scale, same spacing rhythm. Preview every format below, then recolor the two accents live.</p>
+</header>
+
+<div class="wrap">
+  <section class="panel">
+    <h2>Live recolor</h2>
+    <div class="controls">
+      <label class="ctrl"><input type="color" id="cA" value="#FF5C39" data-var="--re-a"><span>Accent A <span class="hex" id="aHex">#FF5C39</span></span></label>
+      <label class="ctrl"><input type="color" id="cB" value="#1F7A6D" data-var="--re-b"><span>Accent B <span class="hex" id="bHex">#1F7A6D</span></span></label>
+      <button type="button" id="reset">Reset to kit palette</button>
+    </div>
+  </section>
+
+  <section class="panel">
+    <h2>Kit palette</h2>
+    <div class="swatches">
+      <div class="swatch"><span class="chip" style="background:#101828"></span><div><b>Ink</b><span>#101828 · dark backgrounds, body text</span></div></div>
+      <div class="swatch"><span class="chip" style="background:#F7F5F2"></span><div><b>Paper</b><span>#F7F5F2 · light backgrounds, text on dark</span></div></div>
+      <div class="swatch"><span class="chip" style="background:#FF5C39"></span><div><b>Coral</b><span>#FF5C39 · badges, CTAs, accent rules</span></div></div>
+      <div class="swatch"><span class="chip" style="background:#1F7A6D"></span><div><b>Teal</b><span>#1F7A6D · shapes, dividers, attribution</span></div></div>
+    </div>
+  </section>
+
+  <div class="grid">
+    <figure><div class="frame"><svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1350" viewBox="0 0 1080 1350" role="img" font-family='system-ui, -apple-system, "Segoe UI", Roboto, sans-serif'>
+  <title>Instagram portrait post — Fresh roast, every Monday — 1080 by 1350</title>
+  <defs>
+    <linearGradient id="post-band" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#1F7A6D"/>
+      <stop offset="1" stop-color="#FF5C39"/>
+    </linearGradient>
+  </defs>
+  <rect x="0" y="0" width="1080" height="1350" fill="#F7F5F2"/>
+  <circle cx="1010" cy="1300" r="230" fill="#1F7A6D" opacity="0.12"/>
+  <rect x="720" y="96" width="264" height="264" rx="64" fill="url(#post-band)"/>
+  <rect x="96" y="96" width="336" height="56" rx="28" fill="#FF5C39"/>
+  <text x="264" y="133" text-anchor="middle" font-size="18" font-weight="700" letter-spacing="2.5" fill="#101828">HARBORLINE ROASTERS</text>
+  <text x="96" y="470" font-size="96" font-weight="800" fill="#101828">
+    <tspan x="96" dy="0">Fresh roast,</tspan>
+    <tspan x="96" dy="101">every Monday.</tspan>
+  </text>
+  <rect x="96" y="650" width="160" height="10" rx="5" fill="#FF5C39"/>
+  <text x="96" y="740" font-size="32" font-weight="600" fill="#101828">
+    <tspan x="96" dy="0">Ethiopia Guji Natural is back —</tspan>
+    <tspan x="96" dy="42">stone fruit, cocoa nib, brown sugar.</tspan>
+  </text>
+  <rect x="96" y="840" width="440" height="64" rx="32" fill="#101828"/>
+  <text x="316" y="881" text-anchor="middle" font-size="24" font-weight="700" fill="#F7F5F2">Orders close Sunday, 8 pm</text>
+  <text x="96" y="1244" font-size="24" font-weight="600" fill="#101828">harborline.coffee · Spring Lot 04</text>
+</svg>
+</div><figcaption><b>post-1080x1350.svg</b> — Instagram portrait post<span>1080 × 1350 px · headline, subhead, brand badge</span></figcaption></figure>
+    <figure><div class="frame"><svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1920" viewBox="0 0 1080 1920" role="img" font-family='system-ui, -apple-system, "Segoe UI", Roboto, sans-serif'>
+  <title>Instagram story — Colombia Huila has landed — 1080 by 1920, all content inside the 250 px top and 320 px bottom safe zones</title>
+  <defs>
+    <linearGradient id="story-glow" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#1F7A6D" stop-opacity="0.55"/>
+      <stop offset="1" stop-color="#1F7A6D" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+  <rect x="0" y="0" width="1080" height="1920" fill="#101828"/>
+  <rect x="0" y="250" width="1080" height="700" fill="url(#story-glow)"/>
+  <circle cx="960" cy="1180" r="210" fill="#1F7A6D" opacity="0.25"/>
+  <circle cx="950" cy="700" r="40" fill="#FF5C39"/>
+  <rect x="96" y="300" width="260" height="56" rx="28" fill="#FF5C39"/>
+  <text x="226" y="337" text-anchor="middle" font-size="18" font-weight="700" letter-spacing="2.5" fill="#101828">NEW THIS WEEK</text>
+  <text x="96" y="520" font-size="96" font-weight="800" fill="#F7F5F2">
+    <tspan x="96" dy="0">Colombia Huila</tspan>
+    <tspan x="96" dy="101">has <tspan fill="#FF5C39">landed.</tspan></tspan>
+  </text>
+  <rect x="96" y="740" width="160" height="10" rx="5" fill="#FF5C39"/>
+  <text x="96" y="830" font-size="30" font-weight="600" fill="#F7F5F2">
+    <tspan x="96" dy="0">Washed Caturra, grown at 1,750 masl.</tspan>
+    <tspan x="96" dy="44">Red apple, panela, lime zest.</tspan>
+    <tspan x="96" dy="44">Roasted Sunday, on your desk Tuesday.</tspan>
+  </text>
+  <rect x="96" y="1030" width="560" height="100" rx="50" fill="#F7F5F2"/>
+  <text x="376" y="1092" text-anchor="middle" font-size="30" font-weight="800" fill="#101828">250 g · $19 · 120 bags only</text>
+  <rect x="96" y="1200" width="620" height="112" rx="56" fill="#FF5C39"/>
+  <text x="406" y="1268" text-anchor="middle" font-size="32" font-weight="700" fill="#101828">Tap the link to order →</text>
+  <text x="96" y="1390" font-size="24" font-weight="600" fill="#F7F5F2" opacity="0.75">New drops land every Monday at 7 am.</text>
+  <text x="96" y="1540" font-size="24" font-weight="600" fill="#F7F5F2">harborline.coffee · Spring Lot 04</text>
+</svg>
+</div><figcaption><b>story-1080x1920.svg</b> — Instagram story<span>1080 × 1920 px · safe zones kept clear top and bottom</span></figcaption></figure>
+    <figure><div class="frame"><svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720" role="img" font-family='system-ui, -apple-system, "Segoe UI", Roboto, sans-serif'>
+  <title>YouTube thumbnail — 5 Espresso Mistakes — 1280 by 720</title>
+  <defs>
+    <linearGradient id="thumb-grad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#1F7A6D"/>
+      <stop offset="1" stop-color="#FF5C39"/>
+    </linearGradient>
+  </defs>
+  <rect x="0" y="0" width="1280" height="720" fill="#101828"/>
+  <circle cx="1210" cy="80" r="240" fill="#1F7A6D" opacity="0.28"/>
+  <circle cx="60" cy="760" r="200" fill="url(#thumb-grad)" opacity="0.3"/>
+  <rect x="64" y="56" width="380" height="52" rx="26" fill="#FF5C39"/>
+  <text x="254" y="89" text-anchor="middle" font-size="18" font-weight="700" letter-spacing="2.5" fill="#101828">BREW GUIDE · EPISODE 12</text>
+  <text x="64" y="310" font-size="120" font-weight="800" fill="#F7F5F2">
+    <tspan x="64" dy="0">5 ESPRESSO</tspan>
+    <tspan x="64" dy="126" fill="#FF5C39">MISTAKES</tspan>
+  </text>
+  <rect x="64" y="478" width="180" height="12" rx="6" fill="#1F7A6D"/>
+  <text x="64" y="565" font-size="36" font-weight="600" fill="#F7F5F2">Fix a sour or bitter shot in 6 minutes.</text>
+  <circle cx="1080" cy="440" r="170" fill="#FF5C39"/>
+  <circle cx="1080" cy="440" r="188" fill="none" stroke="#F7F5F2" stroke-width="6" stroke-dasharray="14 18"/>
+  <text x="1080" y="440" text-anchor="middle" font-size="150" font-weight="800" fill="#101828">6</text>
+  <text x="1080" y="505" text-anchor="middle" font-size="26" font-weight="700" letter-spacing="4" fill="#101828">MINUTES</text>
+</svg>
+</div><figcaption><b>thumbnail-1280x720.svg</b> — YouTube thumbnail<span>1280 × 720 px · bold title plus cutout accent</span></figcaption></figure>
+    <figure><div class="frame"><svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1080" viewBox="0 0 1080 1080" role="img" font-family='system-ui, -apple-system, "Segoe UI", Roboto, sans-serif'>
+  <title>Quote card — Great coffee isn't made, it's measured — 1080 by 1080</title>
+  <defs>
+    <linearGradient id="quote-rule" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#FF5C39"/>
+      <stop offset="1" stop-color="#1F7A6D"/>
+    </linearGradient>
+  </defs>
+  <rect x="0" y="0" width="1080" height="1080" fill="#F7F5F2"/>
+  <rect x="0" y="0" width="1080" height="24" fill="url(#quote-rule)"/>
+  <rect x="0" y="1056" width="1080" height="24" fill="url(#quote-rule)"/>
+  <circle cx="1020" cy="140" r="160" fill="#FF5C39" opacity="0.10"/>
+  <circle cx="60" cy="960" r="180" fill="#1F7A6D" opacity="0.08"/>
+  <text x="540" y="380" text-anchor="middle" font-size="240" font-weight="800" fill="#FF5C39">“</text>
+  <text x="540" y="470" text-anchor="middle" font-size="54" font-weight="700" fill="#101828">
+    <tspan x="540" dy="0">Great coffee isn't made.</tspan>
+    <tspan x="540" dy="72">It's measured — dose, time,</tspan>
+    <tspan x="540" dy="72">temperature — then repeated</tspan>
+    <tspan x="540" dy="72">every single morning.</tspan>
+  </text>
+  <rect x="490" y="740" width="100" height="8" rx="4" fill="#FF5C39"/>
+  <text x="540" y="820" text-anchor="middle" font-size="26" font-weight="700" letter-spacing="3" fill="#1F7A6D">MAYA ORTIZ · HEAD ROASTER</text>
+  <text x="540" y="862" text-anchor="middle" font-size="20" font-weight="600" letter-spacing="2" fill="#101828">HARBORLINE COFFEE ROASTERS</text>
+  <text x="540" y="970" text-anchor="middle" font-size="22" font-weight="600" fill="#101828" opacity="0.7">harborline.coffee · Spring Lot 04</text>
+</svg>
+</div><figcaption><b>quote-1080x1080.svg</b> — Quote card<span>1080 × 1080 px · centered quote and attribution</span></figcaption></figure>
+    <figure><div class="frame"><svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" role="img" font-family='system-ui, -apple-system, "Segoe UI", Roboto, sans-serif'>
+  <title>X, Twitter and Open Graph banner — Harborline Coffee Roasters — 1600 by 900</title>
+  <defs>
+    <linearGradient id="banner-grad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#1F7A6D"/>
+      <stop offset="1" stop-color="#FF5C39"/>
+    </linearGradient>
+  </defs>
+  <rect x="0" y="0" width="1600" height="900" fill="#101828"/>
+  <circle cx="1300" cy="450" r="310" fill="url(#banner-grad)"/>
+  <circle cx="1300" cy="450" r="350" fill="none" stroke="#1F7A6D" stroke-width="4" opacity="0.6"/>
+  <circle cx="1300" cy="450" r="185" fill="#F7F5F2"/>
+  <text x="1300" y="432" text-anchor="middle" font-size="46" font-weight="800" letter-spacing="2" fill="#101828">SPRING</text>
+  <text x="1300" y="490" text-anchor="middle" font-size="46" font-weight="800" fill="#1F7A6D">LOT 04</text>
+  <text x="120" y="200" font-size="22" font-weight="700" letter-spacing="5" fill="#FF5C39">SMALL-BATCH COFFEE ROASTERS</text>
+  <text x="120" y="350" font-size="116" font-weight="800" fill="#F7F5F2">HARBORLINE</text>
+  <text x="120" y="470" font-size="36" font-weight="400" fill="#F7F5F2">
+    <tspan x="120" dy="0">Small-batch beans, roasted every Monday —</tspan>
+    <tspan x="120" dy="52">shipped the same afternoon.</tspan>
+  </text>
+  <rect x="120" y="620" width="470" height="100" rx="50" fill="#FF5C39"/>
+  <text x="355" y="682" text-anchor="middle" font-size="30" font-weight="700" fill="#101828">Shop Spring Lot 04 →</text>
+  <text x="640" y="682" font-size="26" font-weight="600" fill="#F7F5F2">Explore past roasts →</text>
+  <text x="120" y="810" font-size="24" font-weight="600" fill="#F7F5F2" opacity="0.7">harborline.coffee · free shipping over $40</text>
+</svg>
+</div><figcaption><b>banner-1600x900.svg</b> — X/Twitter and OG banner<span>1600 × 900 px · brand, tagline, call to action</span></figcaption></figure>
+    <figure><div class="frame"><svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1350" viewBox="0 0 1080 1350" role="img" font-family='system-ui, -apple-system, "Segoe UI", Roboto, sans-serif'>
+  <title>Carousel slide 2 of 5 — What's in the bag — 1080 by 1350</title>
+  <defs>
+    <linearGradient id="carousel-rule" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#FF5C39"/>
+      <stop offset="1" stop-color="#1F7A6D"/>
+    </linearGradient>
+  </defs>
+  <rect x="0" y="0" width="1080" height="1350" fill="#101828"/>
+  <rect x="0" y="0" width="1080" height="16" fill="url(#carousel-rule)"/>
+  <circle cx="1040" cy="940" r="240" fill="#1F7A6D" opacity="0.15"/>
+  <rect x="96" y="96" width="240" height="52" rx="26" fill="#FF5C39"/>
+  <text x="216" y="129" text-anchor="middle" font-size="18" font-weight="700" letter-spacing="2.5" fill="#101828">HARBORLINE</text>
+  <text x="984" y="129" text-anchor="end" font-size="18" font-weight="700" letter-spacing="3" fill="#F7F5F2" opacity="0.7">SLIDE 02 / 05</text>
+  <text x="96" y="330" font-size="80" font-weight="800" fill="#F7F5F2">What's in the bag</text>
+  <text x="96" y="392" font-size="28" font-weight="400" fill="#F7F5F2" opacity="0.75">Every bag of Colombia Huila ships with these numbers.</text>
+  <text x="96" y="560" font-size="64" font-weight="800" fill="#FF5C39">01</text>
+  <text x="240" y="524" font-size="18" font-weight="700" letter-spacing="3" fill="#F7F5F2" opacity="0.65">ORIGIN</text>
+  <text x="240" y="560" font-size="32" font-weight="600" fill="#F7F5F2">Huila, Colombia · washed Caturra</text>
+  <rect x="96" y="616" width="888" height="2" fill="#1F7A6D" opacity="0.7"/>
+  <text x="96" y="800" font-size="64" font-weight="800" fill="#FF5C39">02</text>
+  <text x="240" y="764" font-size="18" font-weight="700" letter-spacing="3" fill="#F7F5F2" opacity="0.65">ROAST</text>
+  <text x="240" y="800" font-size="32" font-weight="600" fill="#F7F5F2">Filter profile, dropped at 11:20</text>
+  <rect x="96" y="856" width="888" height="2" fill="#1F7A6D" opacity="0.7"/>
+  <text x="96" y="1040" font-size="64" font-weight="800" fill="#FF5C39">03</text>
+  <text x="240" y="1004" font-size="18" font-weight="700" letter-spacing="3" fill="#F7F5F2" opacity="0.65">BREW</text>
+  <text x="240" y="1040" font-size="32" font-weight="600" fill="#F7F5F2">18 g in · 300 g out · 2:45 total</text>
+  <rect x="96" y="1096" width="888" height="2" fill="#1F7A6D" opacity="0.7"/>
+  <text x="96" y="1180" font-size="26" font-weight="600" fill="#F7F5F2">
+    <tspan x="96" dy="0">Save this slide —</tspan>
+    <tspan x="96" dy="38">the full brew chart is on the next one.</tspan>
+  </text>
+</svg>
+</div><figcaption><b>carousel-1080x1350-slide2.svg</b> — Carousel slide 2<span>1080 × 1350 px · numbered detail layout</span></figcaption></figure>
+  </div>
+</div>
+
+<footer>Every preview above is the real SVG file, inlined. Colors shown as swatches are the kit palette from design-system.md.</footer>
+
+<script>
+const a = document.getElementById('cA');
+const b = document.getElementById('cB');
+const root = document.documentElement;
+function apply() {
+  root.style.setProperty('--re-a', a.value);
+  root.style.setProperty('--re-b', b.value);
+  document.getElementById('aHex').textContent = a.value.toUpperCase();
+  document.getElementById('bHex').textContent = b.value.toUpperCase();
+}
+a.addEventListener('input', apply);
+b.addEventListener('input', apply);
+document.getElementById('reset').addEventListener('click', () => {
+  a.value = '#FF5C39';
+  b.value = '#1F7A6D';
+  apply();
+});
+apply();
+</script>
+</body>
+</html>

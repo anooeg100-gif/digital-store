@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1920" viewBox="0 0 1080 1920" role="img" font-family='system-ui, -apple-system, "Segoe UI", Roboto, sans-serif'>
+  <title>Instagram story — Colombia Huila has landed — 1080 by 1920, all content inside the 250 px top and 320 px bottom safe zones</title>
+  <defs>
+    <linearGradient id="story-glow" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#1F7A6D" stop-opacity="0.55"/>
+      <stop offset="1" stop-color="#1F7A6D" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+  <rect x="0" y="0" width="1080" height="1920" fill="#101828"/>
+  <rect x="0" y="250" width="1080" height="700" fill="url(#story-glow)"/>
+  <circle cx="960" cy="1180" r="210" fill="#1F7A6D" opacity="0.25"/>
+  <circle cx="950" cy="700" r="40" fill="#FF5C39"/>
+  <rect x="96" y="300" width="260" height="56" rx="28" fill="#FF5C39"/>
+  <text x="226" y="337" text-anchor="middle" font-size="18" font-weight="700" letter-spacing="2.5" fill="#101828">NEW THIS WEEK</text>
+  <text x="96" y="520" font-size="96" font-weight="800" fill="#F7F5F2">
+    <tspan x="96" dy="0">Colombia Huila</tspan>
+    <tspan x="96" dy="101">has <tspan fill="#FF5C39">landed.</tspan></tspan>
+  </text>
+  <rect x="96" y="740" width="160" height="10" rx="5" fill="#FF5C39"/>
+  <text x="96" y="830" font-size="30" font-weight="600" fill="#F7F5F2">
+    <tspan x="96" dy="0">Washed Caturra, grown at 1,750 masl.</tspan>
+    <tspan x="96" dy="44">Red apple, panela, lime zest.</tspan>
+    <tspan x="96" dy="44">Roasted Sunday, on your desk Tuesday.</tspan>
+  </text>
+  <rect x="96" y="1030" width="560" height="100" rx="50" fill="#F7F5F2"/>
+  <text x="376" y="1092" text-anchor="middle" font-size="30" font-weight="800" fill="#101828">250 g · $19 · 120 bags only</text>
+  <rect x="96" y="1200" width="620" height="112" rx="56" fill="#FF5C39"/>
+  <text x="406" y="1268" text-anchor="middle" font-size="32" font-weight="700" fill="#101828">Tap the link to order →</text>
+  <text x="96" y="1390" font-size="24" font-weight="600" fill="#F7F5F2" opacity="0.75">New drops land every Monday at 7 am.</text>
+  <text x="96" y="1540" font-size="24" font-weight="600" fill="#F7F5F2">harborline.coffee · Spring Lot 04</text>
+</svg>

@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1350" viewBox="0 0 1080 1350" role="img" font-family='system-ui, -apple-system, "Segoe UI", Roboto, sans-serif'>
+  <title>Carousel slide 2 of 5 — What's in the bag — 1080 by 1350</title>
+  <defs>
+    <linearGradient id="carousel-rule" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#FF5C39"/>
+      <stop offset="1" stop-color="#1F7A6D"/>
+    </linearGradient>
+  </defs>
+  <rect x="0" y="0" width="1080" height="1350" fill="#101828"/>
+  <rect x="0" y="0" width="1080" height="16" fill="url(#carousel-rule)"/>
+  <circle cx="1040" cy="940" r="240" fill="#1F7A6D" opacity="0.15"/>
+  <rect x="96" y="96" width="240" height="52" rx="26" fill="#FF5C39"/>
+  <text x="216" y="129" text-anchor="middle" font-size="18" font-weight="700" letter-spacing="2.5" fill="#101828">HARBORLINE</text>
+  <text x="984" y="129" text-anchor="end" font-size="18" font-weight="700" letter-spacing="3" fill="#F7F5F2" opacity="0.7">SLIDE 02 / 05</text>
+  <text x="96" y="330" font-size="80" font-weight="800" fill="#F7F5F2">What's in the bag</text>
+  <text x="96" y="392" font-size="28" font-weight="400" fill="#F7F5F2" opacity="0.75">Every bag of Colombia Huila ships with these numbers.</text>
+  <text x="96" y="560" font-size="64" font-weight="800" fill="#FF5C39">01</text>
+  <text x="240" y="524" font-size="18" font-weight="700" letter-spacing="3" fill="#F7F5F2" opacity="0.65">ORIGIN</text>
+  <text x="240" y="560" font-size="32" font-weight="600" fill="#F7F5F2">Huila, Colombia · washed Caturra</text>
+  <rect x="96" y="616" width="888" height="2" fill="#1F7A6D" opacity="0.7"/>
+  <text x="96" y="800" font-size="64" font-weight="800" fill="#FF5C39">02</text>
+  <text x="240" y="764" font-size="18" font-weight="700" letter-spacing="3" fill="#F7F5F2" opacity="0.65">ROAST</text>
+  <text x="240" y="800" font-size="32" font-weight="600" fill="#F7F5F2">Filter profile, dropped at 11:20</text>
+  <rect x="96" y="856" width="888" height="2" fill="#1F7A6D" opacity="0.7"/>
+  <text x="96" y="1040" font-size="64" font-weight="800" fill="#FF5C39">03</text>
+  <text x="240" y="1004" font-size="18" font-weight="700" letter-spacing="3" fill="#F7F5F2" opacity="0.65">BREW</text>
+  <text x="240" y="1040" font-size="32" font-weight="600" fill="#F7F5F2">18 g in · 300 g out · 2:45 total</text>
+  <rect x="96" y="1096" width="888" height="2" fill="#1F7A6D" opacity="0.7"/>
+  <text x="96" y="1180" font-size="26" font-weight="600" fill="#F7F5F2">
+    <tspan x="96" dy="0">Save this slide —</tspan>
+    <tspan x="96" dy="38">the full brew chart is on the next one.</tspan>
+  </text>
+</svg>
