@@ -1,7 +1,38 @@
 {
   "currency": "USD",
-  "global_link": "",
+  "global_link": "https://buy.stripe.com/cNi7sN4Fe14daYF8TUc7u0x",
   "accept": {},
   "contact": "",
-  "products": {}
+  "products": {
+    "micro-tools-playbook": {
+      "price": 9.0,
+      "currency": "usd",
+      "link": "https://buy.stripe.com/cNi7sN4Fe14daYF8TUc7u0x",
+      "note": "stripe:plink_1UONi9PNeZ716HAiZyqaqwPr"
+    },
+    "social-media-design-kit": {
+      "price": 12.0,
+      "currency": "usd",
+      "link": "https://buy.stripe.com/fZu00l5JicMVeaR2vwc7u0y",
+      "note": "stripe:plink_1UONiBPNeZ716HAiS6IXqgEj"
+    },
+    "landing-starter": {
+      "price": 15.0,
+      "currency": "usd",
+      "link": "https://buy.stripe.com/dRm00l4Fe9AJ2s97PQc7u0z",
+      "note": "stripe:plink_1UONiDPNeZ716HAi2Qn7siVd"
+    },
+    "promo-short-kit": {
+      "price": 19.0,
+      "currency": "usd",
+      "link": "https://buy.stripe.com/aFa00lfjS5kt4Ah3zAc7u0A",
+      "note": "stripe:plink_1UONiFPNeZ716HAiZmb077iU"
+    },
+    "faceless-shorts-pack": {
+      "price": 19.0,
+      "currency": "usd",
+      "link": "https://buy.stripe.com/6oU6oJb3CcMV9UB2vwc7u0B",
+      "note": "stripe:plink_1UONiIPNeZ716HAi712ULTdB"
+    }
+  }
 }
