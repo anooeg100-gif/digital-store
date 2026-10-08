@@ -1,0 +1,20 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>JSON Formatter - free, offline</title>
+<style>body{font-family:system-ui;margin:0;background:#0f172a;color:#e2e8f0}
+header{padding:16px;background:#1e293b}textarea,pre{width:100%;box-sizing:border-box;
+font-family:ui-monospace,Consolas,monospace;font-size:13px;border:0;border-radius:8px}
+textarea{height:38vh;padding:12px;background:#111827;color:#e2e8f0}
+pre{min-height:38vh;padding:12px;background:#111827;overflow:auto;white-space:pre-wrap}
+button{margin:8px 8px 0 0;padding:8px 14px;border:0;border-radius:8px;
+background:#6366f1;color:#fff;cursor:pointer}main{padding:16px}</style></head>
+<body><header><b>JSON Formatter</b> - 100% offline, no upload</header>
+<main><textarea id="i" placeholder='paste JSON...'>{"a":1,"b":[1,2,3]}</textarea>
+<button onclick="f()">Format</button><button onclick="m()">Minify</button>
+<p id="e" style="color:#f87171"></p><pre id="o"></pre></main>
+<script>
+const i=document.getElementById('i'),o=document.getElementById('o'),e=document.getElementById('e');
+function p(){e.textContent='';try{return JSON.parse(i.value)}catch(x){e.textContent=x.message;return null}}
+function f(){const v=p();if(v!==null)o.textContent=JSON.stringify(v,null,2)}
+function m(){const v=p();if(v!==null)o.textContent=JSON.stringify(v)}
+</script></body></html>

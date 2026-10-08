@@ -1,7 +1,7 @@
 {
-  "generated": "2026-10-08 02:44:47",
+  "generated": "2026-10-08 03:36:29",
   "store_url": "https://anooeg100-gif.github.io/digital-store/",
-  "count": 9,
+  "count": 10,
   "products": [
     {
       "slug": "json-formatter",
@@ -88,6 +88,16 @@
       "name": "Faceless Shorts Pack",
       "category": "video",
       "problem": "Vertical text-based promo clips for faceless channels.",
+      "demo_url": "",
+      "paid": false,
+      "price": null,
+      "status": "built"
+    },
+    {
+      "slug": "tiktok-thumbnail-generator",
+      "name": "TikTok Thumbnail Generator",
+      "category": "web_tool",
+      "problem": "Generate TikTok thumbnails offline",
       "demo_url": "",
       "paid": false,
       "price": null,
