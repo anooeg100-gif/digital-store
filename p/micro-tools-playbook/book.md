@@ -532,7 +532,7 @@ Limits worth paying to remove (pick the one that matches your tool):
 - **File/batch size:** free up to 1 MB or 1 file; Pro handles 50 MB / batch of 100.
 - **History:** free = current session (localStorage); Pro = saved presets across devices.
 - **Format coverage:** free = the 3 formats 80% need; Pro = the full matrix (30 formats).
-- **Automation:** free = paste once; Pro = URL input, folders, scheduled jobs.
+- **Scheduled and batch jobs:** free = paste once; Pro = URL input, folders, scheduled re-runs.
 - **Usage caps for programmatic access:** free = 20 API calls/day in the browser; Pro = unlimited (this becomes Path 5).
 
 - **Pricing:** utility products convert best at **$4–$9/month** or **$29–$79 one-time lifetime**. Lifetime pricing works well here because your marginal cost is ~zero and users hate subscriptions for tiny tools; a $49 "lifetime" tier often outsells a $6/mo plan at this size. Annual: two months free ($48/yr for a $5/mo plan).
