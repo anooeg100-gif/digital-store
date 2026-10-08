@@ -1,5 +1,5 @@
 {
-  "generated": "2026-10-09 00:20:55",
+  "generated": "2026-10-09 00:24:15",
   "store_url": "https://anooeg100-gif.github.io/digital-store/",
   "count": 24,
   "products": [
@@ -9,7 +9,7 @@
       "category": "web_tool",
       "problem": "تنسيق/تصغير JSON بسرعة دون رفع بياناتك لأي موقع.",
       "demo_url": "",
-      "paid": true,
+      "paid": false,
       "price": null,
       "status": "built"
     },
@@ -19,7 +19,7 @@
       "category": "web_tool",
       "problem": "عدّ الكلمات والأحرف وزمن القراءة داخل المتصفح.",
       "demo_url": "",
-      "paid": true,
+      "paid": false,
       "price": null,
       "status": "built"
     },
@@ -29,7 +29,7 @@
       "category": "web_tool",
       "problem": "Switch text case between UPPER/lower/Title/snake/camel.",
       "demo_url": "",
-      "paid": true,
+      "paid": false,
       "price": null,
       "status": "built"
     },
@@ -39,7 +39,7 @@
       "category": "web_tool",
       "problem": "Encode and decode Base64 locally, no network.",
       "demo_url": "",
-      "paid": true,
+      "paid": false,
       "price": null,
       "status": "built"
     },
@@ -99,7 +99,7 @@
       "category": "web_tool",
       "problem": "Generate TikTok thumbnails offline",
       "demo_url": "",
-      "paid": true,
+      "paid": false,
       "price": null,
       "status": "built"
     },
@@ -109,7 +109,7 @@
       "category": "web_tool",
       "problem": "Convert CSV to JSON and back with schema inference",
       "demo_url": "",
-      "paid": true,
+      "paid": false,
       "price": null,
       "status": "built"
     },
@@ -119,7 +119,7 @@
       "category": "web_tool",
       "problem": "Test, debug, and explain regex patterns",
       "demo_url": "",
-      "paid": true,
+      "paid": false,
       "price": null,
       "status": "built"
     },
@@ -129,7 +129,7 @@
       "category": "web_tool",
       "problem": "Decode, verify, and inspect JWT tokens",
       "demo_url": "",
-      "paid": true,
+      "paid": false,
       "price": null,
       "status": "built"
     },
@@ -139,7 +139,7 @@
       "category": "web_tool",
       "problem": "Generate WCAG AA/AAA compliant color palettes",
       "demo_url": "",
-      "paid": true,
+      "paid": false,
       "price": null,
       "status": "built"
     },
@@ -149,7 +149,7 @@
       "category": "web_tool",
       "problem": "Minify and clean SVG files",
       "demo_url": "",
-      "paid": true,
+      "paid": false,
       "price": null,
       "status": "built"
     },
@@ -159,7 +159,7 @@
       "category": "web_tool",
       "problem": "Convert Markdown to HTML with GFM and TOC",
       "demo_url": "",
-      "paid": true,
+      "paid": false,
       "price": null,
       "status": "built"
     },
@@ -169,7 +169,7 @@
       "category": "web_tool",
       "problem": "Build, test, and understand cron expressions",
       "demo_url": "",
-      "paid": true,
+      "paid": false,
       "price": null,
       "status": "built"
     },
@@ -179,7 +179,7 @@
       "category": "web_tool",
       "problem": "Encode/decode Base64, URL, Hex formats",
       "demo_url": "",
-      "paid": true,
+      "paid": false,
       "price": null,
       "status": "built"
     },
@@ -189,7 +189,7 @@
       "category": "web_tool",
       "problem": "Generate UUIDs, ULIDs, NanoIDs in batch",
       "demo_url": "",
-      "paid": true,
+      "paid": false,
       "price": null,
       "status": "built"
     },
@@ -199,7 +199,7 @@
       "category": "web_tool",
       "problem": "Look up HTTP status codes and meanings",
       "demo_url": "",
-      "paid": true,
+      "paid": false,
       "price": null,
       "status": "built"
     },
@@ -209,7 +209,7 @@
       "category": "web_tool",
       "problem": "Find MIME type by extension or vice versa",
       "demo_url": "",
-      "paid": true,
+      "paid": false,
       "price": null,
       "status": "built"
     },
@@ -219,7 +219,7 @@
       "category": "web_tool",
       "problem": "Minify CSS with optimization options",
       "demo_url": "",
-      "paid": true,
+      "paid": false,
       "price": null,
       "status": "built"
     },
@@ -229,7 +229,7 @@
       "category": "web_tool",
       "problem": "Format SQL queries for PostgreSQL/MySQL/SQLite",
       "demo_url": "",
-      "paid": true,
+      "paid": false,
       "price": null,
       "status": "built"
     },
@@ -239,7 +239,7 @@
       "category": "web_tool",
       "problem": "Build, validate, format GraphQL queries",
       "demo_url": "",
-      "paid": true,
+      "paid": false,
       "price": null,
       "status": "built"
     }
